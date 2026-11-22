@@ -1,0 +1,169 @@
+<!-- FILE: /public/admin/site.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌐 إعدادات الموقع والدومين</title>
+<style>
+:root{--bg:#04170d;--card:rgba(6,32,19,.92);--line:rgba(255,255,255,.12);--gold:#e6b455;--gold2:#ffe9a8;--txt:#eef5f0;--mut:#9fb3a8;--ok:#35d07f;--bad:#ff5a5a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,system-ui,sans-serif}
+body{background:radial-gradient(ellipse at 50% -10%,#0d5c33,#04170d 60%);color:var(--txt);min-height:100vh;padding:16px 14px 60px}
+.wrap{max-width:900px;margin:0 auto}
+h1{color:var(--gold2);font-size:1.3rem;text-align:center}
+.sub{text-align:center;color:var(--mut);font-size:.82rem;margin:6px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.card h2{color:var(--gold);font-size:1rem;margin-bottom:6px}
+.hint{font-size:.76rem;color:var(--mut);line-height:1.8;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+label{display:block;font-size:.76rem;font-weight:800;color:#cfe0d5;margin-bottom:5px}
+input,select,textarea{width:100%;background:rgba(0,0,0,.42);border:1.5px solid rgba(255,255,255,.16);color:#fff;padding:10px 12px;border-radius:11px;font-size:.88rem;outline:0;min-height:42px;font-family:inherit}
+textarea{min-height:90px;font-family:ui-monospace,monospace;font-size:.74rem}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.sw{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:10px 12px;cursor:pointer;min-height:42px}
+.sw input{width:20px;height:20px;accent-color:var(--ok);min-height:0}
+.sw span{font-size:.8rem;font-weight:800}
+.btn{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:900;font-size:.86rem;min-height:44px;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+.btn:active{transform:scale(.96)}
+.gold{background:linear-gradient(180deg,#ffe9a8,#e6b455 55%,#a9700f);color:#2a1a02}
+.green{background:linear-gradient(180deg,#5fe3a1,#1eb463 55%,#0c6b3c);color:#04240f}
+.blue{background:linear-gradient(180deg,#7fdcff,#1f9fd6 55%,#0a5b7d);color:#03222f}
+.dark{background:rgba(255,255,255,.08);color:var(--txt);border:1px solid var(--line)}
+.red{background:linear-gradient(180deg,#ff8a8a,#d81f2f 55%,#8c1220);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.68rem;font-weight:900;background:rgba(53,208,127,.16);color:#8ff0bb}
+.mono{font-family:ui-monospace,monospace;font-size:.74rem;color:#9fe6ff;word-break:break-all}
+.prev{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.76rem;line-height:2}
+.warn{background:rgba(255,194,71,.1);border:1px solid rgba(255,194,71,.35);border-radius:12px;padding:12px;font-size:.78rem;color:#ffeec4;line-height:1.9}
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99;display:flex;flex-direction:column;gap:6px}
+.tst{background:rgba(6,26,16,.97);border:1.5px solid var(--gold);color:#fff;padding:10px 18px;border-radius:99px;font-size:.82rem;font-weight:900}
+.tst.bad{border-color:var(--bad)}
+.gate{max-width:420px;margin:60px auto}
+ol{padding-inline-start:20px}
+li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="wrap">
+<h1>🌐 إعدادات الموقع والدومين</h1>
+<p class="sub">تتحدّث إعدادات الهوية والروابط الرسمية داخل التطبيق فوراً. تغيير DNS أو ملكية النطاق أو شهادة SSL يتم لدى مزوّد الاستضافة/النطاق ولا يتم تلقائياً من هنا.</p>
+
+<div id="gate" class="card gate">
+  <h2>🔐 كلمة سر الأدمن</h2>
+  <input type="password" id="pass" placeholder="كلمة السر" onkeydown="if(event.key==='Enter')login()">
+  <div class="row"><button class="btn gold" style="width:100%" onclick="login()">ادخل</button></div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="card">
+    <h2>🔗 الدومين</h2>
+    <p class="hint">اكتب الدومين الجديد كاملاً مع https. كل الروابط الرسمية (canonical / og / sitemap / JSON-LD) تستعملو.</p>
+    <div class="grid">
+      <div><label>الدومين الأساسي</label><input id="domain" placeholder="https://belotetounsi.com"></div>
+      <div><label>شكل الدومين المفضّل</label><select id="wwwMode"><option value="apex">بلا www (belotetounsi.com)</option><option value="www">مع www (www.belotetounsi.com)</option></select></div>
+      <label class="sw"><input type="checkbox" id="redirectOldDomain"><span>حوّل الدومين القديم تلقائياً (301) للجديد</span></label>
+    </div>
+    <div class="row"><button class="btn gold" onclick="save()">💾 احفظ وطبّق فوراً</button><button class="btn dark" onclick="load()">🔄 تحديث</button><button class="btn red" onclick="reset()">↺ الافتراضي</button></div>
+  </div>
+
+  <div class="card">
+    <h2>🪪 هوية الموقع</h2>
+    <div class="grid">
+      <div><label>اسم الموقع الكامل</label><input id="name"></div>
+      <div><label>الاسم المختصر</label><input id="short"></div>
+      <div><label>بريد الاتصال</label><input id="email" placeholder="contact@belotetounsi.com"></div>
+      <div><label>المدينة (للشروط)</label><input id="city"></div>
+      <div><label>مسار اللوغو</label><input id="logo" placeholder="/icon.svg"></div>
+      <div><label>تاريخ آخر تحديث</label><input id="updated" placeholder="2026-11-20"></div>
+      <div><label>حساب تويتر (اختياري)</label><input id="twitter" placeholder="@belotetounsi"></div>
+    </div>
+    <div class="row"><button class="btn green" onclick="save()">💾 احفظ الهوية</button></div>
+  </div>
+
+  <div class="card">
+    <h2>📄 معاينة حيّة</h2>
+    <div class="prev" id="prev"></div>
+    <div class="row">
+      <button class="btn blue" onclick="openUrl('')">🏠 الرئيسية</button>
+      <button class="btn blue" onclick="openUrl('/rules')">📖 القواعد</button>
+      <button class="btn blue" onclick="openUrl('/sitemap.xml')">🗺️ sitemap</button>
+      <button class="btn blue" onclick="openUrl('/robots.txt')">🤖 robots</button>
+      <button class="btn blue" onclick="openUrl('/ads.txt')">📺 ads.txt</button>
+      <button class="btn blue" onclick="openUrl('/play')">🃏 اللعبة</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧩 كود إضافي (اختياري)</h2>
+    <p class="hint">يتحقن في كل الصفحات العامة. يُقبل فقط وسم meta للتحقق من Google/Bing/Yandex/Pinterest/Facebook. الوسوم والسكربتات الأخرى تُهمل للحماية. محتوى body الإضافي غير محقون.</p>
+    <label>قبل &lt;/head&gt;</label><textarea id="extraHead" placeholder='&lt;meta name="google-site-verification" content="..."&gt;'></textarea>
+    <label>قبل &lt;/body&gt; (معطّل للحماية)</label><textarea id="extraBody" disabled placeholder="الحقن المباشر للسكربتات غير متاح"></textarea>
+    <div class="row"><button class="btn gold" onclick="save()">💾 احفظ</button></div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ خطوات خارج الكود (لازم تعملهم بيدك)</h2>
+    <div class="warn">
+      <ol>
+        <li><b>DNS:</b> وجّه الدومين الجديد لنفس IP السيرفر (سجل A).</li>
+        <li><b>nginx / aaPanel:</b> زيد الدومين الجديد في إعدادات الموقع (Server Name).</li>
+        <li><b>SSL:</b> أصدر شهادة Let's Encrypt للدومين الجديد.</li>
+        <li><b>Google OAuth:</b> زيد <span class="mono">https://الدومين-الجديد/api/auth/google/callback</span> في Authorized redirect URIs.</li>
+        <li><b>AdSense:</b> زيد الموقع الجديد في Sites وفعّل التحقق.</li>
+        <li><b>Search Console:</b> زيد الملكية الجديدة وابعث الـsitemap.</li>
+      </ol>
+      الكود من جهتو <b>جاهز</b> — هاذا الإعدادات ما تنجمش تتعمل من البانل لأنها خارج التطبيق.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var KEY=sessionStorage.getItem('beloteAdminKey')||'', S=null;
+function toast(m,bad){var b=document.getElementById('toast');var d=document.createElement('div');d.className='tst'+(bad?' bad':'');d.textContent=m;b.appendChild(d);setTimeout(function(){d.remove();},3200);}
+function v(id){var e=document.getElementById(id);return e.type==='checkbox'?e.checked:e.value;}
+function set(id,val){var e=document.getElementById(id);if(!e)return;if(e.type==='checkbox')e.checked=!!val;else e.value=val==null?'':val;}
+function api(p,m,b){return fetch(p,{method:m||'GET',headers:Object.assign({'x-admin-passcode':KEY},b?{'Content-Type':'application/json'}:{}),body:b?JSON.stringify(b):undefined}).then(function(r){return r.json().then(function(j){return{ok:r.ok&&j.ok!==false,j:j,status:r.status};});});}
+function login(){KEY=document.getElementById('pass').value.trim();if(!KEY)return toast('اكتب كلمة السر',true);sessionStorage.setItem('beloteAdminKey',KEY);load();}
+function load(){
+  api('/api/admin/site').then(function(o){
+    if(o.status===401){document.getElementById('gate').style.display='block';document.getElementById('app').style.display='none';return toast('كلمة السر غالطة',true);}
+    if(!o.ok)return toast(o.j.error||'فشل',true);
+    S=o.j.site;
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    ['domain','wwwMode','redirectOldDomain','name','short','email','city','logo','updated','twitter','extraHead','extraBody'].forEach(function(k){set(k,S[k]);});
+    preview();
+  }).catch(function(){toast('تعذّر الاتصال',true);});
+}
+function preview(){
+  var d=v('domain').replace(/\/+$/,'');
+  if(!/^https?:\/\//.test(d))d='https://'+d;
+  var host=d.replace(/^https?:\/\//,'');
+  if(v('wwwMode')==='www'&&host.indexOf('www.')!==0)host='www.'+host;
+  if(v('wwwMode')==='apex')host=host.replace(/^www\./,'');
+  var origin='https://'+host;
+  document.getElementById('prev').innerHTML=
+    'canonical: <span class="mono">'+origin+'/rules</span><br>'+
+    'sitemap: <span class="mono">'+origin+'/sitemap.xml</span><br>'+
+    'robots: <span class="mono">'+origin+'/robots.txt</span><br>'+
+    'ads.txt: <span class="mono">'+origin+'/ads.txt</span><br>'+
+    'OAuth callback: <span class="mono">'+origin+'/api/auth/google/callback</span><br>'+
+    'بريد الاتصال: <span class="mono">'+v('email')+'</span> <span class="pill">يتحدّث في كل الصفحات</span>';
+}
+['domain','wwwMode','email'].forEach(function(id){var e=document.getElementById(id);if(e){e.oninput=preview;e.onchange=preview;}});
+function save(){
+  var body={};
+  ['domain','wwwMode','redirectOldDomain','name','short','email','city','logo','updated','twitter','extraHead','extraBody'].forEach(function(k){body[k]=v(k);});
+  api('/api/admin/site','POST',body).then(function(o){
+    if(!o.ok)return toast(o.j.error||'فشل الحفظ',true);
+    S=o.j.site;toast('✅ تحفظ وتطبّق فوراً على كل الصفحات');load();
+  });
+}
+function reset(){if(!confirm('رجوع للإعدادات الافتراضية؟'))return;api('/api/admin/site/reset','POST',{}).then(function(o){toast(o.ok?'↺ رجع الافتراضي':'فشل',!o.ok);load();});}
+function openUrl(p){var d=(S&&S.domain)||v('domain');window.open(d+p,'_blank');}
+if(KEY)load();
+</script>
+</body>
+</html>

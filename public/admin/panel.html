@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🛠️ لوحة تحكم بلوت تونسي</title>
+<style>
+:root{--gold:#e6b455;--gold-hi:#ffe9a8;--card:rgba(6,32,19,.9);--line:rgba(255,255,255,.12);--line-g:rgba(230,180,85,.38);--ok:#35d07f;--bad:#ff5a5a;--txt:#eef5f0;--mut:#9fb3a8}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,system-ui,sans-serif}
+body{background:radial-gradient(ellipse at 50% -10%,#0d5c33,#04170d 60%);color:var(--txt);min-height:100vh;padding-bottom:40px}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:rgba(2,20,12,.6)}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold-hi),var(--gold));border-radius:8px}
+header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(4,23,13,.98),rgba(4,23,13,.92));backdrop-filter:blur(12px);border-bottom:1.5px solid var(--line-g);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:1.12rem;color:var(--gold-hi);font-weight:900;flex:1;min-width:170px}
+.badge{font-size:.68rem;font-weight:900;padding:4px 11px;border-radius:999px;border:1px solid var(--line-g);background:rgba(230,180,85,.12);color:var(--gold-hi)}
+.badge.on{background:rgba(53,208,127,.16);border-color:rgba(53,208,127,.5);color:#8ff0bb}
+.badge.off{background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.45);color:#ffb3b3}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt);padding:9px 15px;border-radius:11px;font-weight:900;font-size:.82rem}
+.tab.active{background:linear-gradient(180deg,#ffe9a8,#e0a53c);color:#2a1a02;border-color:#fff3cf}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card h2{font-size:1rem;color:var(--gold);margin-bottom:4px;font-weight:900}
+.card .hint{font-size:.74rem;color:var(--mut);margin-bottom:14px;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+label{display:block;font-size:.76rem;font-weight:800;color:#cfe0d5;margin-bottom:5px}
+input[type=text],input[type=number],input[type=password],select,textarea{width:100%;background:rgba(0,0,0,.42);border:1.5px solid rgba(255,255,255,.16);color:#fff;padding:10px 12px;border-radius:11px;font-size:.86rem;outline:0;min-height:42px}
+textarea{min-height:80px;font-family:ui-monospace,monospace;font-size:.72rem}
+.sw{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:10px 12px;cursor:pointer;min-height:42px}
+.sw input{width:20px;height:20px;accent-color:#35d07f;cursor:pointer}
+.sw span{font-size:.8rem;font-weight:800}
+.btn{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:900;font-size:.86rem;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:active{transform:scale(.95)}
+.btn-gold{background:linear-gradient(180deg,#ffe9a8,#e6b455 55%,#a9700f);color:#2a1a02}
+.btn-green{background:linear-gradient(180deg,#5fe3a1,#1eb463 55%,#0c6b3c);color:#04240f}
+.btn-blue{background:linear-gradient(180deg,#7fdcff,#1f9fd6 55%,#0a5b7d);color:#03222f}
+.btn-red{background:linear-gradient(180deg,#ff8a8a,#d81f2f 55%,#8c1220);color:#fff}
+.btn-dark{background:rgba(255,255,255,.08);color:var(--txt);border:1px solid var(--line)}
+.btn-sm{padding:6px 12px;min-height:34px;font-size:.74rem;border-radius:9px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:linear-gradient(160deg,rgba(230,180,85,.1),rgba(255,255,255,.03));border:1px solid var(--line-g);border-radius:14px;padding:13px;text-align:center}
+.stat b{display:block;font-size:1.4rem;color:var(--gold-hi);font-weight:900}
+.stat span{font-size:.66rem;color:var(--mut);font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th,td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--gold);font-weight:900;font-size:.7rem;background:rgba(230,180,85,.07)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.66rem;font-weight:900}
+.pill.g{background:rgba(53,208,127,.16);color:#8ff0bb}.pill.r{background:rgba(255,90,90,.16);color:#ffb3b3}.pill.b{background:rgba(53,200,240,.16);color:#9fe6ff}.pill.y{background:rgba(245,184,61,.16);color:#ffe1a3}
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:7px}
+.tst{background:rgba(6,26,16,.97);border:1.5px solid var(--gold);color:#fff;padding:10px 18px;border-radius:999px;font-size:.82rem;font-weight:900}
+.tst.bad{border-color:var(--bad)}
+.modal{position:fixed;inset:0;background:rgba(1,8,5,.8);z-index:150;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal-card{width:min(96vw,520px);max-height:90vh;overflow-y:auto;background:linear-gradient(180deg,#06301c,#04170d);border:2px solid var(--gold);border-radius:18px;padding:18px}
+.modal-card h3{color:var(--gold-hi);margin-bottom:12px}
+.tier-row{display:grid;grid-template-columns:44px 1fr 90px 90px 90px 40px;gap:7px;align-items:center;margin-bottom:7px}
+.tier-row input{min-height:38px;padding:7px 9px;font-size:.78rem}
+.login{max-width:430px;margin:70px auto;padding:22px}
+.errbox{display:none;background:rgba(255,90,90,.14);border:1.5px solid rgba(255,90,90,.5);color:#ffc4c4;border-radius:12px;padding:10px 12px;font-size:.78rem;font-weight:800;margin-top:10px;line-height:1.6}
+.errbox.show{display:block}
+.mono{font-family:ui-monospace,monospace;font-size:.72rem;color:#9fe6ff;word-break:break-all}
+.sep{height:1px;background:var(--line);margin:14px 0}
+details{margin-top:10px}
+summary{cursor:pointer;font-size:.78rem;font-weight:900;color:var(--warn)}
+.net-box{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;background:rgba(255,255,255,.03)}
+.net-box h3{font-size:.88rem;color:var(--gold-hi);margin-bottom:8px}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div id="loginBox" class="login card">
+  <h2 style="color:var(--gold-hi);margin-bottom:6px">🔐 دخول الأدمن</h2>
+  <div class="hint" style="margin-bottom:12px">كلمة السر = اللي ضبطتها من هنا، وإلا اللي في <span class="mono">src/config.js</span>، ولا توجد كلمة مرور افتراضية. عيّن ADMIN_PASSCODE أو استخدم رمز تهيئة الإنقاذ المحلي مرة واحدة.</div>
+  <label>كلمة السر</label>
+  <input type="password" id="passInput" onkeydown="if(event.key==='Enter')doLogin()">
+  <div style="height:10px"></div>
+  <button class="btn btn-gold" style="width:100%" id="loginBtn" onclick="doLogin()">ادخل</button>
+  <div class="errbox" id="loginErr"></div>
+  <p class="hint" style="margin-top:10px">أدوات الإدارة المركزية: <a href="/admin/site.html">إعدادات الموقع والدومين</a> · <a href="/admin/brain-panel.html">تعلم الروبوت</a> · <a href="/admin/bot-rules.html">قواعد الروبوت</a></p>
+  <details>
+    <summary>نسيت كلمة السر؟ توكن الإنقاذ</summary>
+    <div class="hint" style="margin:8px 0">عند أول تشغيل بلا كلمة مرور مضبوطة، اقرأ الملف المحلي المحمي <span class="mono">src/data/.admin-bootstrap-token</span> من الخادم خلال 10 دقائق. لا ترسل الرمز لأحد.</div>
+    <input type="text" id="bootToken" placeholder="توكن الإنقاذ">
+    <div style="height:8px"></div>
+    <input type="password" id="bootNew" placeholder="كلمة سر قوية (12+ رمزاً)">
+    <div style="height:8px"></div>
+    <button class="btn btn-blue btn-sm" style="width:100%" onclick="doBootstrap()">♻️ اضبط كلمة سر جديدة</button>
+  </details>
+  <div style="height:10px"></div>
+  <button class="btn btn-dark btn-sm" style="width:100%" onclick="diagnose()">🩺 تشخيص الاتصال</button>
+  <div class="hint" id="diagOut" style="margin-top:8px"></div>
+</div>
+
+<div id="app" style="display:none">
+<header>
+  <h1>🛠️ لوحة تحكم بلوت تونسي</h1>
+  <span class="badge" id="bEco">الاقتصاد</span>
+  <span class="badge" id="bAds">الإشهارات</span>
+  <span class="badge" id="bGoo">Google</span>
+  <span class="badge" id="bDb">MySQL</span>
+  <a class="btn btn-dark btn-sm" href="/admin/site.html">🌐 الموقع/النطاق</a>
+  <a class="btn btn-dark btn-sm" href="/admin/brain-panel.html">🧠 تعلم الروبوت</a>
+  <a class="btn btn-dark btn-sm" href="/admin/bot-rules.html">🤖 قواعد الروبوت</a>
+  <button class="btn btn-dark btn-sm" onclick="loadAll()">🔄 تحديث</button>
+  <button class="btn btn-red btn-sm" onclick="logout()">خروج</button>
+</header>
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-p="overview">📊 نظرة عامة</button>
+    <button class="tab" data-p="ads">📺 شبكات الإشهار</button>
+    <button class="tab" data-p="google">🔗 Google</button>
+    <button class="tab" data-p="economy">🪙 الاقتصاد</button>
+    <button class="tab" data-p="tiers">🎴 الطاولات</button>
+    <button class="tab" data-p="players">👥 اللاعبون</button>
+    <button class="tab" data-p="ledger">📒 السجل</button>
+    <button class="tab" data-p="rooms">🪑 طاولات حية</button>
+    <button class="tab" data-p="system">⚙️ النظام</button>
+  </div>
+
+  <div class="panel active" id="p-overview">
+    <div class="card"><h2>📊 إحصائيات حية</h2><div class="hint">تتحدّث كل 15 ثانية</div><div class="stats" id="statsBox"></div></div>
+    <div class="card"><h2>🎁 هدية سريعة (الأدمن فقط يوزّع نقاط)</h2>
+      <div class="grid">
+        <div><label>اسم اللاعب أو ID</label><input type="text" id="qGiftName"></div>
+        <div><label>عدد النقاط</label><input type="number" id="qGiftAmt" value="500" min="1"></div>
+        <div><label>ملاحظة</label><input type="text" id="qGiftNote"></div>
+      </div>
+      <div style="height:12px"></div>
+      <button class="btn btn-gold" onclick="quickGift()">🎁 ابعث الهدية</button>
+    </div>
+    <div class="card"><h2>🕑 آخر الهدايا</h2><div id="giftsBox"></div></div>
+  </div>
+
+  <div class="panel" id="p-ads">
+    <div class="card">
+      <h2>📺 شبكات الإشهار — كل شيء من هنا، يتطبق فوراً</h2>
+      <div class="hint">الشبكة اللي فوقها ✅ تتحقن تلقائياً في Head كل الصفحات + تتولد في ads.txt. الشبكات تتنافس فترفع أرباحك.</div>
+      <div class="grid">
+        <label class="sw"><input type="checkbox" id="ads_enabled"><span>تفعيل نظام الإشهارات المكافئة</span></label>
+        <label class="sw"><input type="checkbox" id="ads_testMode"><span>وضع التجربة (بلا إشهار حقيقي)</span></label>
+        <label class="sw"><input type="checkbox" id="ads_ssvEnabled"><span>تحقق SSV لجوجل (متقدم)</span></label>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <div><label>نقاط لكل إشهار مكافئ</label><input type="number" id="ads_rewardPoints" min="1"></div>
+        <div><label>الحد اليومي لكل لاعب</label><input type="number" id="ads_dailyCap" min="0"></div>
+        <div><label>انتظار بين إشهارين (ثانية)</label><input type="number" id="ads_cooldownSec" min="0"></div>
+      </div>
+      <div class="sep"></div>
+      <div class="net-box">
+        <h3>🇬 Google AdSense — الرئيسية (الإشهار المكافئ + التحقق)</h3>
+        <div class="grid">
+          <div><label>Publisher ID</label><input type="text" id="ads_publisherId" placeholder="ca-pub-XXXX"></div>
+          <div><label>Ad Unit ID (وحدة مكافئة)</label><input type="text" id="ads_adUnitId"></div>
+          <label class="sw"><input type="checkbox" id="ads_loadHeadScript"><span>حقن سكربت التحقق في Head (مطلوب لفحص جوجل)</span></label>
+          <label class="sw"><input type="checkbox" id="ads_verificationMeta"><span>Meta tag تحقق إضافي</span></label>
+        </div>
+      </div>
+      <div class="net-box">
+        <h3>🌐 Media.net — شبكة ثانية (سياقية، ترفع المنافسة)</h3>
+        <div class="grid">
+          <label class="sw"><input type="checkbox" id="ads_medianetEnabled"><span>تفعيل Media.net</span></label>
+          <div><label>Customer ID (cid)</label><input type="text" id="ads_medianetCustomerId"></div>
+        </div>
+        <div class="hint" style="margin-top:8px">بعد القبول، الصق وحداتهم في خانة «وحدات مخصصة» تحت.</div>
+      </div>
+      <div class="net-box">
+        <h3>✍️ Infolinks — شبكة ثالثة (in-text تلقائية، بلا وحدات)</h3>
+        <div class="grid">
+          <label class="sw"><input type="checkbox" id="ads_infolinksEnabled"><span>تفعيل Infolinks</span></label>
+          <div><label>IL_PID</label><input type="text" id="ads_infolinksPid"></div>
+          <div><label>IL_WLID</label><input type="text" id="ads_infolinksWlid"></div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <label>📄 أسطر إضافية لـ ads.txt (الصقها من لوحة أي شبكة أخرى)</label>
+      <textarea id="ads_adsTxtExtra"></textarea>
+      <label>🧩 وحدات مخصصة HTML لأي شبكة (تُحقن قبل &lt;/body&gt; — ثق في المصدر فقط)</label>
+      <textarea id="ads_bodyHtmlExtra"></textarea>
+      <div class="sep"></div>
+      <label>معاينة Head المتحقن الآن</label>
+      <textarea id="adsPreviewHead" readonly></textarea>
+      <label>معاينة ads.txt (متوفر على /ads.txt)</label>
+      <textarea id="adsPreviewTxt" readonly></textarea>
+      <div style="height:12px"></div>
+      <div class="row"><button class="btn btn-gold" onclick="saveAds()">💾 احفظ وطبّق فوراً</button><button class="btn btn-dark" onclick="resetGroup('ads')">↺ افتراضي</button></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-google">
+    <div class="card">
+      <h2>🔗 Google Connect (حسابات اللاعبين)</h2>
+      <div class="hint">اللاعب يدخل كضيف، ويربط حسابه بـ Google باش يحفظ نقاطه على أي جهاز.</div>
+      <div class="grid">
+        <label class="sw"><input type="checkbox" id="google_enabled"><span>تفعيل الدخول بـ Google</span></label>
+        <label class="sw"><input type="checkbox" id="google_allowSignup"><span>السماح بحسابات جديدة</span></label>
+      </div>
+      <div class="sep"></div>
+      <div class="grid">
+        <div><label>Client ID</label><input type="text" id="google_clientId"></div>
+        <div><label>Client Secret <span id="gooSecretState" class="pill g" style="display:none">محفوظ</span></label><input type="password" id="google_clientSecret" placeholder="فارغ = بلا تغيير"></div>
+        <div><label>نص الزر</label><input type="text" id="google_buttonText"></div>
+        <div><label>Redirect URI</label><input type="text" id="google_redirectUri"></div>
+      </div>
+      <div class="hint" style="margin-top:10px">حطّ هذا في Google Console:<br><span class="mono" id="gooRedirectHint"></span></div>
+      <div class="row"><button class="btn btn-gold" onclick="saveGoogle()">💾 احفظ</button><button class="btn btn-blue" onclick="window.open('/api/auth/google/start','_blank')">🧪 جرّب</button></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-economy">
+    <div class="card">
+      <h2>🪙 الاقتصاد — بلا نقاط مجانية</h2>
+      <div class="hint">الرصيد يبدأ 0. النقاط من: الربح + الإشهار + هدايا الأدمن فقط.</div>
+      <div class="grid">
+        <label class="sw"><input type="checkbox" id="economy_enabled"><span>تفعيل نظام النقاط</span></label>
+        <label class="sw"><input type="checkbox" id="economy_refundOnAbort"><span>إرجاع عند إلغاء المباراة</span></label>
+        <label class="sw"><input type="checkbox" id="economy_allowNegative"><span>رصيد سالب (ممنوع)</span></label>
+      </div>
+      <div class="sep"></div>
+      <div class="grid">
+        <div><label>رصيد البداية (خليه 0)</label><input type="number" id="economy_startingBalance" min="0"></div>
+        <div><label>ثمن الطاولة الخاصة</label><input type="number" id="economy_privateTableFee" min="0"></div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="hint" id="ecoMath"></div>
+      <div class="row"><button class="btn btn-gold" onclick="saveEconomy()">💾 احفظ</button></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-tiers">
+    <div class="card">
+      <h2>🎴 طاولات اللعب (بلا عمولة)</h2>
+      <div class="hint">4×الدخول = الصندوق • الرابحين ×2 لكل واحد • البوتات معفاة.</div>
+      <div id="tiersBox"></div>
+      <div style="height:12px"></div>
+      <div class="row"><button class="btn btn-green" onclick="addTier()">➕ زيد</button><button class="btn btn-gold" onclick="saveTiers()">💾 احفظ</button></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-players">
+    <div class="card">
+      <h2>👥 اللاعبون — بحث + هدايا + حظر</h2>
+      <div class="row" style="margin-bottom:12px">
+        <input type="text" id="userSearch" placeholder="لوّج بالاسم / ID / الإيميل..." style="flex:1;min-width:200px" oninput="loadUsers()">
+        <button class="btn btn-blue btn-sm" onclick="loadUsers()">🔍</button>
+        <button class="btn btn-gold btn-sm" onclick="openBulk()">🎁 جماعية</button>
+      </div>
+      <div style="overflow-x:auto"><table><thead><tr><th>اللاعب</th><th>ID</th><th>الرصيد</th><th>النوع</th><th>لعب/ربح</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-ledger">
+    <div class="card"><h2>📒 دفتر القيود</h2>
+      <div class="row" style="margin-bottom:12px">
+        <input type="text" id="ledgerUid" placeholder="ID لاعب (اختياري)" style="flex:1;min-width:160px">
+        <button class="btn btn-blue btn-sm" onclick="loadLedger()">اعرض</button>
+      </div>
+      <div style="overflow-x:auto"><table><thead><tr><th>الوقت</th><th>اللاعب</th><th>الحركة</th><th>الرصيد</th><th>السبب</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-rooms">
+    <div class="card"><h2>🪑 الطاولات الحية</h2><div class="row" style="margin-bottom:12px"><button class="btn btn-blue btn-sm" onclick="loadRooms()">🔄</button></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>الكود</th><th>الاسم</th><th>الحالة</th><th>لاعبين</th><th>المستوى</th><th></th></tr></thead><tbody id="roomsBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-system">
+    <div class="card">
+      <h2>🎮 إعدادات اللعب + Auto-fill</h2>
+      <div class="grid">
+        <div><label>هدف المباراة</label><input type="number" id="game_targetScore"></div>
+        <div><label>مهلة الدور (ث)</label><input type="number" id="game_turnTimeoutSec"></div>
+        <div><label>مهلة إدخال البوتات (ث)</label><input type="number" id="game_autoFillDelaySec"></div>
+        <label class="sw"><input type="checkbox" id="game_autoFillBots"><span>بوتات تكمل الطاولات العامة</span></label>
+        <label class="sw"><input type="checkbox" id="game_autoStartOnFill"><span>بداية تلقائية بعد التعبئة</span></label>
+        <label class="sw"><input type="checkbox" id="game_allowPrivate"><span>طاولات خاصة</span></label>
+        <label class="sw"><input type="checkbox" id="game_chatEnabled"><span>الشات</span></label>
+        <label class="sw"><input type="checkbox" id="game_voiceEnabled"><span>الصوت</span></label>
+      </div>
+      <div style="height:12px"></div><button class="btn btn-gold" onclick="saveGame()">💾 احفظ</button>
+    </div>
+    <div class="card">
+      <h2>🗄️ MySQL</h2>
+      <div class="grid">
+        <label class="sw"><input type="checkbox" id="db_enabled"><span>تفعيل</span></label>
+        <div><label>Host</label><input type="text" id="db_host"></div>
+        <div><label>Port</label><input type="number" id="db_port"></div>
+        <div><label>User</label><input type="text" id="db_user"></div>
+        <div><label>Password <span id="dbPassState" class="pill g" style="display:none">محفوظ</span></label><input type="password" id="db_password" placeholder="فارغ = بلا تغيير"></div>
+        <div><label>Database</label><input type="text" id="db_database"></div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="row"><button class="btn btn-gold" onclick="saveDb()">💾</button><button class="btn btn-blue" onclick="testDb()">🔌 اختبر</button><button class="btn btn-dark" onclick="restoreDb()">⬇️ استرجع</button></div>
+      <div class="hint" id="dbState" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <h2>🔐 الأمان + كلمة السر</h2>
+      <div class="grid">
+        <label class="sw"><input type="checkbox" id="security_guestAllowed"><span>دخول الضيوف</span></label>
+        <div><label>أقصى حسابات/IP/يوم</label><input type="number" id="security_maxAccountsPerIpPerDay"></div>
+        <div><label>كلمة سر الأدمن الجديدة</label><input type="password" id="security_adminPasscode" placeholder="فارغ = بلا تغيير"></div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="row"><button class="btn btn-gold" onclick="saveSecurity()">💾 احفظ</button><button class="btn btn-blue" onclick="exportAll()">⬇️ تصدير</button><button class="btn btn-dark" onclick="document.getElementById('impFile').click()">⬆️ استيراد</button><input type="file" id="impFile" accept="application/json" style="display:none" onchange="importAll(this)"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal" id="giftModal"><div class="modal-card">
+  <h3>🎁 هدية للاعب</h3>
+  <div class="hint" id="gmWho"></div>
+  <label>النقاط</label><input type="number" id="gmAmt" value="500" min="1">
+  <div style="height:10px"></div>
+  <label>ملاحظة</label><input type="text" id="gmNote">
+  <div style="height:14px"></div>
+  <div class="row"><button class="btn btn-gold" onclick="sendGift()">ابعث</button><button class="btn btn-dark" onclick="closeModal('giftModal')">إلغاء</button></div>
+</div></div>
+<div class="modal" id="bulkModal"><div class="modal-card">
+  <h3>🎁 هدية جماعية</h3>
+  <label>النقاط لكل لاعب</label><input type="number" id="bmAmt" value="100" min="1">
+  <div style="height:10px"></div>
+  <label>ملاحظة</label><input type="text" id="bmNote" value="هدية جماعية">
+  <div style="height:14px"></div>
+  <div class="row"><button class="btn btn-gold" onclick="sendBulk()">ابعث</button><button class="btn btn-dark" onclick="closeModal('bulkModal')">إلغاء</button></div>
+</div></div>
+
+<script>
+let KEY = sessionStorage.getItem('beloteAdminKey') || '';
+let CFG = null, USERS = [], TIERS = [], giftTarget = null;
+function toast(m,b){const x=document.getElementById('toast');const d=document.createElement('div');d.className='tst'+(b?' bad':'');d.textContent=m;x.appendChild(d);setTimeout(()=>d.remove(),3400);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(n){return Number(n||0).toLocaleString('en-US');}
+function dt(t){try{return new Date(t).toLocaleString('fr-FR',{hour12:false});}catch(e){return '';}}
+function val(id){const e=document.getElementById(id);if(!e)return '';return e.type==='checkbox'?e.checked:e.value;}
+function setV(id,v){const e=document.getElementById(id);if(!e)return;if(e.type==='checkbox')e.checked=!!v;else e.value=(v==null?'':v);}
+function showErr(m){const e=document.getElementById('loginErr');e.innerHTML=m;e.classList.add('show');}
+async function api(p,m,b){
+  const r=await fetch(p,{method:m||'GET',headers:Object.assign({'x-admin-passcode':KEY},b?{'Content-Type':'application/json'}:{}),body:b?JSON.stringify(b):undefined});
+  const j=await r.json().catch(()=>({ok:false,error:'رد غير صالح ('+r.status+')'}));
+  if(r.status===401)throw new Error('كلمة السر غالطة (401)');
+  return j;
+}
+async function diagnose(){
+  const out=document.getElementById('diagOut');out.innerHTML='⏳ فحص...';
+  try{
+    const a=await fetch('/api/app-config');const aj=await a.json();
+    const p=await fetch('/api/admin/passinfo').catch(()=>null);
+    out.innerHTML='✅ السيرفر يجيب. الاقتصاد: '+(aj.economy&&aj.economy.enabled?'مفعّل':'معطّل')+'<br>تحقق: <span class="mono">/ads.txt</span> و Head يتحقنوا من البانل.';
+  }catch(e){out.innerHTML='❌ ما نجمناش نوصلو: '+esc(e.message);}
+}
+async function doBootstrap(){
+  const t=val('bootToken'),n=val('bootNew');
+  if(!t||!n)return toast('عمّر التوكن وكلمة السر',true);
+  try{
+    const r=await fetch('/api/admin/bootstrap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:t,newPasscode:n})});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||'فشل');
+    KEY=n;sessionStorage.setItem('beloteAdminKey',KEY);toast('✅ تبدّلت كلمة السر');setTimeout(doLogin,500);
+  }catch(e){toast(e.message,true);}
+}
+async function doLogin(){
+  const inp=document.getElementById('passInput').value.trim();
+  if(!inp)return showErr('اكتب كلمة السر.');
+  KEY=inp;document.getElementById('loginErr').classList.remove('show');
+  try{
+    const j=await api('/api/admin/settings');if(!j.ok)throw new Error(j.error||'فشل');
+    sessionStorage.setItem('beloteAdminKey',KEY);
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('app').style.display='block';
+    applySettings(j.settings);loadAll();toast('مرحبا بيك 👋');
+  }catch(e){showErr('❌ '+esc(e.message)+'<br>جرّب التشخيص أو توكن الإنقاذ.');}
+}
+function logout(){sessionStorage.removeItem('beloteAdminKey');KEY='';location.reload();}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');document.getElementById('p-'+t.dataset.p).classList.add('active');
+  if(t.dataset.p==='players')loadUsers();
+  if(t.dataset.p==='ledger')loadLedger();
+  if(t.dataset.p==='rooms')loadRooms();
+});
+function adsPreviews(a){
+  const pub=(a&&a.publisherId)||'';
+  let head='';
+  if(pub&&a.loadHeadScript!==false)head+='<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+pub+'" crossorigin="anonymous"><\/script>\n';
+  if(pub&&a.verificationMeta)head+='<meta name="google-adsense-account" content="'+pub+'">\n';
+  if(a.medianetEnabled&&a.medianetCustomerId)head+='<script src="https://contextual.media.net/dmedianet.js?cid='+a.medianetCustomerId+'" async><\/script>\n';
+  if(a.infolinksEnabled)head+='var IL_PID/IL_WLID + infolinks_wsb.js\n';
+  const ph=document.getElementById('adsPreviewHead');if(ph)ph.value=head||'(فعّل شبكة وحط IDs)';
+  let txt='';
+  if(pub)txt+='google.com, '+pub+', DIRECT, f08c47fec0942fa0\n';
+  if(a.adsTxtExtra)txt+=a.adsTxtExtra+'\n';
+  const pt=document.getElementById('adsPreviewTxt');if(pt)pt.value=txt||'(حط Publisher ID)';
+}
+function applySettings(s){
+  CFG=s;
+  ['ads','google','economy','game','db','security'].forEach(g=>{Object.keys(s[g]||{}).forEach(k=>{const id=g+'_'+k;const el=document.getElementById(id);if(el)setV(id,s[g][k]);});});
+  document.getElementById('gooSecretState').style.display=s.google.clientSecretSet?'inline-block':'none';
+  document.getElementById('dbPassState').style.display=s.db.passwordSet?'inline-block':'none';
+  const o=location.origin;
+  document.getElementById('gooRedirectHint').textContent=o+'/api/auth/google/callback';
+  if(!s.google.redirectUri)setV('google_redirectUri',o+'/api/auth/google/callback');
+  adsPreviews(s.ads||{});
+  TIERS=JSON.parse(JSON.stringify(s.tiers||[]));
+  renderTiers();badges();ecoMath();
+}
+function badges(){
+  const set=(id,on,txt)=>{const e=document.getElementById(id);e.className='badge '+(on?'on':'off');e.textContent=txt+(on?' ✅':' ⛔');};
+  set('bEco',CFG.economy.enabled,'الاقتصاد');set('bAds',CFG.ads.enabled,'الإشهارات');set('bGoo',CFG.google.enabled,'Google');
+  const e=document.getElementById('bDb');e.className='badge '+(CFG.db.enabled?'on':'off');e.textContent='MySQL'+(CFG.db.enabled?' ✅':' ⛔');
+}
+function ecoMath(){
+  const t=(TIERS||[]).filter(x=>x.enabled);
+  document.getElementById('ecoMath').innerHTML=t.map(x=>`${x.emoji} <b>${esc(x.name)}</b>: 4×${fmt(x.entry)} → الرابح ${fmt(x.entry*2)}`).join('<br>')+'<br>🚫 بلا نقاط مجانية.';
+}
+async function loadAll(){
+  try{
+    const s=await api('/api/admin/settings');applySettings(s.settings);
+    const st=await api('/api/admin/stats');renderStats(st.stats);
+    const g=await api('/api/admin/gifts?limit=12');renderGifts(g.rows||[]);
+    const d=await api('/api/admin/db/status');document.getElementById('dbState').innerHTML=d.status.ready?'<span class="pill g">متصل ✅</span>':'<span class="pill r">غير متصل</span> '+esc(d.status.error||'');
+  }catch(e){toast(e.message,true);}
+}
+function renderStats(s){
+  const it=[['اللاعبون',s.users],['نشط 24س',s.active24h],['محظورين',s.banned],['مجموع النقاط',s.totalPoints],['مباريات',s.matches],['إشهارات',s.adsPaid],['هدايا',s.gifts],['قيود',s.ledgerRows]];
+  document.getElementById('statsBox').innerHTML=it.map(([k,v])=>`<div class="stat"><b>${fmt(v)}</b><span>${k}</span></div>`).join('');
+}
+function renderGifts(r){
+  document.getElementById('giftsBox').innerHTML=r.length?`<div style="overflow-x:auto"><table><thead><tr><th>الوقت</th><th>اللاعب</th><th>النقاط</th><th>ملاحظة</th></tr></thead><tbody>${r.map(x=>`<tr><td>${dt(x.ts)}</td><td>${esc(x.name)}</td><td><span class="pill g">+${fmt(x.amount)}</span></td><td>${esc(x.note)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="hint">ما فماش هدايا</div>';
+}
+async function saveGroup(g,o,m){try{const p={};p[g]=o;const j=await api('/api/admin/settings','POST',p);if(!j.ok)throw new Error(j.error);applySettings(j.settings);toast(m||'محفوظ ✅');}catch(e){toast(e.message,true);}}
+function saveAds(){
+  saveAdsCollect();
+}
+function saveAdsCollect(){
+  const o={
+    enabled:val('ads_enabled'),testMode:val('ads_testMode'),ssvEnabled:val('ads_ssvEnabled'),
+    rewardPoints:+val('ads_rewardPoints'),dailyCap:+val('ads_dailyCap'),cooldownSec:+val('ads_cooldownSec'),
+    publisherId:val('ads_publisherId'),adUnitId:val('ads_adUnitId'),
+    loadHeadScript:val('ads_loadHeadScript'),verificationMeta:val('ads_verificationMeta'),
+    medianetEnabled:val('ads_medianetEnabled'),medianetCustomerId:val('ads_medianetCustomerId'),
+    infolinksEnabled:val('ads_infolinksEnabled'),infolinksPid:val('ads_infolinksPid'),infolinksWlid:val('ads_infolinksWlid'),
+    adsTxtExtra:val('ads_adsTxtExtra'),bodyHtmlExtra:val('ads_bodyHtmlExtra'),
+    ssvKeyId:val('ads_ssvKeyId')||'',ssvPublicKeyPem:val('ads_ssvPublicKeyPem')||'',provider:'adsense_h5',onlyWhenBroke:false
+  };
+  saveGroup('ads',o,'الإشهارات محفوظة — تطبّقت فوراً في الموقع 📺');
+}
+function saveGoogle(){saveGroup('google',{enabled:val('google_enabled'),allowSignup:val('google_allowSignup'),clientId:val('google_clientId'),clientSecret:val('google_clientSecret'),buttonText:val('google_buttonText'),redirectUri:val('google_redirectUri'),requireForTierIds:[]},'Google محفوظ 🔗');}
+function saveEconomy(){saveGroup('economy',{enabled:val('economy_enabled'),refundOnAbort:val('economy_refundOnAbort'),allowNegative:val('economy_allowNegative'),startingBalance:+val('economy_startingBalance'),privateTableFee:+val('economy_privateTableFee'),dailyBonusEnabled:false,dailyBonus:0},'الاقتصاد محفوظ 🪙');}
+function saveGame(){saveGroup('game',{targetScore:+val('game_targetScore'),turnTimeoutSec:+val('game_turnTimeoutSec'),autoFillDelaySec:+val('game_autoFillDelaySec'),autoFillBots:val('game_autoFillBots'),autoStartOnFill:val('game_autoStartOnFill'),allowPrivate:val('game_allowPrivate'),chatEnabled:val('game_chatEnabled'),voiceEnabled:val('game_voiceEnabled')},'اللعب محفوظ 🎮');}
+function saveDb(){saveGroup('db',{enabled:val('db_enabled'),host:val('db_host'),port:+val('db_port'),user:val('db_user'),password:val('db_password'),database:val('db_database')},'MySQL محفوظ 🗄️');setTimeout(loadAll,900);}
+function saveSecurity(){saveGroup('security',{guestAllowed:val('security_guestAllowed'),maxAccountsPerIpPerDay:+val('security_maxAccountsPerIpPerDay'),adminPasscode:val('security_adminPasscode')},'الأمان محفوظ 🔐');const np=val('security_adminPasscode');if(np){KEY=np;sessionStorage.setItem('beloteAdminKey',np);setV('security_adminPasscode','');}}
+async function resetGroup(g){if(!confirm('رجوع للإفتراضي؟'))return;try{const j=await api('/api/admin/settings/reset','POST',{group:g});applySettings(j.settings);}catch(e){toast(e.message,true);}}
+async function testDb(){try{const j=await api('/api/admin/db/test','POST',{host:val('db_host'),port:+val('db_port'),user:val('db_user'),password:val('db_password'),database:val('db_database')});toast(j.ok?'ناجح ✅':'فشل: '+(j.reason||''),!j.ok);loadAll();}catch(e){toast(e.message,true);}}
+async function restoreDb(){if(!confirm('استرجاع من MySQL؟'))return;try{const j=await api('/api/admin/db/restore','POST',{});toast(j.ok?'استرجعنا '+j.users:'فشل',!j.ok);loadAll();}catch(e){toast(e.message,true);}}
+function renderTiers(){
+  document.getElementById('tiersBox').innerHTML=TIERS.map((t,i)=>`<div class="tier-row">
+    <input type="text" value="${esc(t.emoji)}" oninput="TIERS[${i}].emoji=this.value">
+    <input type="text" value="${esc(t.name)}" oninput="TIERS[${i}].name=this.value">
+    <input type="number" value="${t.entry}" oninput="TIERS[${i}].entry=+this.value;renderTiers()">
+    <input type="number" value="${t.entry*2}" readonly style="opacity:.7">
+    <input type="number" value="${t.minBalance}" oninput="TIERS[${i}].minBalance=+this.value">
+    <input type="checkbox" ${t.enabled?'checked':''} onchange="TIERS[${i}].enabled=this.checked" style="width:20px;height:20px;accent-color:#35d07f">
+  </div>`).join('');
+  ecoMath();
+}
+function addTier(){TIERS.push({id:'t'+Date.now().toString(36),name:'طاولة جديدة',emoji:'🎴',entry:100,minBalance:0,maxBalance:0,enabled:true,color:'#e6b455'});renderTiers();}
+async function saveTiers(){try{const j=await api('/api/admin/settings','POST',{tiers:TIERS});applySettings(j.settings);}catch(e){toast(e.message,true);}}
+async function loadUsers(){
+  try{const j=await api('/api/admin/users?q='+encodeURIComponent(val('userSearch'))+'&limit=80');USERS=j.users||[];
+    document.getElementById('usersBody').innerHTML=USERS.map(u=>`<tr>
+      <td><b>${esc(u.name)}</b></td><td class="mono">${esc(u.id)}</td>
+      <td><span class="pill y">${fmt(u.balance)}</span></td>
+      <td><span class="pill b">${esc(u.provider||'guest')}</span></td>
+      <td>${(u.stats&&u.stats.played)||0}/${(u.stats&&u.stats.won)||0}</td>
+      <td>${u.banned?'<span class="pill r">محظور</span>':'<span class="pill g">نشط</span>'}</td>
+      <td><div class="row"><button class="btn btn-gold btn-sm" onclick="openGift('${esc(u.id)}')">🎁</button><button class="btn btn-${u.banned?'green':'red'} btn-sm" onclick="toggleBan('${esc(u.id)}',${!u.banned})">${u.banned?'فك':'حظر'}</button></div></td>
+    </tr>`).join('')||'<tr><td colspan="7" class="hint">ما فماش نتائج</td></tr>';
+  }catch(e){toast(e.message,true);}
+}
+function openGift(id){giftTarget=USERS.find(u=>u.id===id)||{id};document.getElementById('gmWho').innerHTML='إلى: <b>'+esc(giftTarget.name||id)+'</b> — الرصيد '+fmt(giftTarget.balance);document.getElementById('giftModal').classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+async function sendGift(){try{const j=await api('/api/admin/gift','POST',{id:giftTarget.id,amount:+val('gmAmt'),note:val('gmNote')});if(!j.ok)throw new Error(j.error);toast('وصلت 🎁');closeModal('giftModal');loadUsers();loadAll();}catch(e){toast(e.message,true);}}
+async function quickGift(){const n=val('qGiftName').trim();if(!n)return toast('اكتب الاسم',true);try{const j=await api('/api/admin/gift','POST',{name:n,amount:+val('qGiftAmt'),note:val('qGiftNote')});if(!j.ok)throw new Error(j.error);toast('وصلت لـ '+j.user.name+' 🎁');setV('qGiftName','');loadAll();}catch(e){toast(e.message,true);}}
+function openBulk(){if(!USERS.length)return toast('اعرض اللاعبين الأول',true);document.getElementById('bulkModal').classList.add('show');}
+async function sendBulk(){try{const j=await api('/api/admin/gift-bulk','POST',{ids:USERS.map(u=>u.id),amount:+val('bmAmt'),note:val('bmNote')});if(!j.ok)throw new Error(j.error);toast('بعثنا لـ '+j.count+' 🎁');closeModal('bulkModal');loadUsers();loadAll();}catch(e){toast(e.message,true);}}
+async function toggleBan(id,b){if(!confirm(b?'حظر؟':'فك؟'))return;try{await api('/api/admin/users/'+id+'/ban','POST',{banned:b,reason:'admin'});loadUsers();}catch(e){toast(e.message,true);}}
+async function loadLedger(){try{const j=await api('/api/admin/ledger?limit=200&uid='+encodeURIComponent(val('ledgerUid')));
+  document.getElementById('ledgerBody').innerHTML=(j.rows||[]).map(r=>`<tr><td>${dt(r.ts)}</td><td class="mono">${esc(r.uid)}</td><td><span class="pill ${r.delta>=0?'g':'r'}">${r.delta>=0?'+':''}${fmt(r.delta)}</span></td><td>${fmt(r.balance)}</td><td>${esc(r.reason)}</td></tr>`).join('')||'<tr><td colspan="5" class="hint">فارغ</td></tr>';}catch(e){}}
+async function loadRooms(){try{const j=await api('/api/admin/rooms');
+  document.getElementById('roomsBody').innerHTML=(j.rooms||[]).map(r=>`<tr><td class="mono">${esc(r.id)}</td><td>${esc(r.name)}</td><td><span class="pill b">${esc(r.status)}</span></td><td>${r.players}/4</td><td>${esc(r.tier||'—')}</td><td><button class="btn btn-red btn-sm" onclick="closeRoom('${esc(r.id)}')">سكّر</button></td></tr>`).join('')||'<tr><td colspan="6" class="hint">ما فماش</td></tr>';}catch(e){}}
+async function closeRoom(id){if(!confirm('سكّر '+id+'؟'))return;try{await api('/api/admin/rooms/'+id+'/close','POST',{});loadRooms();}catch(e){toast(e.message,true);}}
+async function exportAll(){try{const j=await api('/api/admin/export');const b=new Blob([JSON.stringify(j.data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='belote-backup.json';a.click();}catch(e){toast(e.message,true);}}
+function importAll(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=async()=>{try{const d=JSON.parse(rd.result);if(!confirm('استيراد يبدّل كل شيء؟'))return;const j=await api('/api/admin/import','POST',{data:d});toast(j.ok?'تم ✅':'فشل',!j.ok);loadAll();}catch(e){toast('ملف غالط',true);}};rd.readAsText(f);inp.value='';}
+setInterval(()=>{if(KEY&&document.getElementById('app').style.display!=='none')loadAll();},15000);
+if(KEY){document.getElementById('passInput').value=KEY;doLogin();}
+</script>
+</body>
+</html>

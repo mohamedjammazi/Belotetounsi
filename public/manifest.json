@@ -1,0 +1,29 @@
+{
+"name": "بلوت تونسي أونلاين - Belote Contrée 2000",
+"short_name": "بلوت تونسي",
+"description": "لعبة البلوت التونسي أونلاين (Belote Contrée 2000 نقطة) - العب مع أصدقائك أو ضد البوتات الذكية",
+"lang": "ar-TN",
+"dir": "rtl",
+"start_url": "/?source=pwa",
+"scope": "/",
+"display": "fullscreen",
+"display_override": ["fullscreen", "standalone"],
+"orientation": "landscape",
+"background_color": "#072611",
+"theme_color": "#0a2e16",
+"categories": ["games", "entertainment"],
+"icons": [
+{
+"src": "/icon.svg",
+"sizes": "any",
+"type": "image/svg+xml",
+"purpose": "any"
+},
+{
+"src": "/icon.svg",
+"sizes": "512x512",
+"type": "image/svg+xml",
+"purpose": "maskable"
+}
+]
+}

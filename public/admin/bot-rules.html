@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة قواعد ذكاء البوت - بلوت تونسي</title>
+<link rel="stylesheet" href="/admin/bot-rules.css">
+</head>
+<body>
+<main>
+<header>
+<div>
+<h1>🤖 مدير قواعد ذكاء البوت (البلوت التونسي)</h1>
+<p>أضف وعدّل إشارات وقواعد المزايدة التونسية للبوت بسهولة باللغة العربية دون تعديل الكود البرمجي.</p>
+</div>
+<div class="header-actions">
+<a href="/" class="btn-link">🃏 العودة لطاولة اللعب</a>
+<button type="button" id="viewStats" class="preset-btn" style="background:#0891b2">📊 إحصائيات التعلم</button>
+<button type="button" id="runLearning" class="preset-btn" style="background:#7c3aed">🧠 تشغيل التعلم الآن</button>
+<button type="button" id="reload">🔄 تحديث القائمة</button>
+</div>
+</header>
+<div id="learningStatsBox" style="display:none; margin-top:14px; padding:14px; background:#f0f9ff; border:2px solid #0891b2; border-radius:12px;"></div>
+<!-- تسجيل دخول الأدمن -->
+<section class="login">
+<label>🔑 كلمة مرور الأدمن
+<input id="pass" type="password" placeholder="اكتب كلمة مرور الأدمن هنا..." autocomplete="current-password">
+</label>
+<button type="button" id="login">اتصال وتحميل القواعد</button>
+<span id="status"></span>
+</section>
+<!-- دليل مبسط لكيفية إضافة قاعدة يدوياً + قوالب سريعة -->
+<section class="guide-box">
+<h2>💡 كيف تضيف قاعدة جديدة للبوت في 3 خطوات بسيطة؟</h2>
+<div class="steps-grid">
+<div class="step-card">
+<span class="step-num">1</span>
+<div>
+<b>حدد متى تتفعل القاعدة (الشروط):</b>
+<p>مثلاً: اختر <i>"أول فتحة للشريك = 90"</i> وأضف شرطاً ثانياً <i>"هل يملك البوت ولد (V) في لون شريكه؟ = نعم"</i>.</p>
+</div>
+</div>
+<div class="step-card">
+<span class="step-num">2</span>
+<div>
+<b>حدد ماذا يفعل البوت (القرار):</b>
+<p>اختر هل يقول <b>مزايدة (فتح/رفع)</b> أو <b>باس (Pass)</b> أو <b>Contré (320)</b>، وحدد مقدار الزيادة (مثلاً +10 أو +20).</p>
+</div>
+</div>
+<div class="step-card">
+<span class="step-num">3</span>
+<div>
+<b>اختر إشارة التفكير (Tik-Tak) واحفظ:</b>
+<p>إذا أردت أن يُظهر البوت ساعة التفكير ⏱️ قبل أن يتكلم (مثل إشارة ورقتين في الأتو)، فعّل خيار <b>"تشغيل ساعة التفكير"</b> ثم اضغط حفظ.</p>
+</div>
+</div>
+</div>
+<div class="presets-bar">
+<span>⚡ <b>تعبئة سريعة لمثال جاهز (اضغط للتجربة ثم عدّل كما تحب):</b></span>
+<button type="button" class="preset-btn" data-preset="support_j">دعم الشريك (+10) عند امتلاك الولد (V)</button>
+<button type="button" class="preset-btn" data-preset="support_j9">دعم الشريك (+20) عند امتلاك الولد والتسعة (V+9)</button>
+<button type="button" class="preset-btn" data-preset="tiktak_2small">تفكير (Tik-Tak) ثم باس عند امتلاك ورقتين صغيرتين</button>
+<button type="button" class="preset-btn" data-preset="contre_opp">ضرب الخصم Contré عند امتلاك V+9 في لونه</button>
+</div>
+</section>
+<section class="grid">
+<!-- القسم الأيمن: نموذج إضافة وتعديل القاعدة -->
+<article>
+<h2 id="formTitle">➕ إضافة / تعديل قاعدة للبوت</h2>
+<form id="form">
+<input id="id" type="hidden">
+<label>📌 اسم القاعدة (لتعرفها في القائمة)
+<input id="name" required placeholder="مثال: دعم الشريك بـ +10 عندما يفتح 90 وعندي الولد (V)">
+</label>
+<div class="row">
+<label>🔢 الأولوية (Priority - الرقم الأعلى يُنفذ أولاً)
+<input id="priority" type="number" value="800" min="1" max="9999">
+</label>
+<label>🟢 حالة القاعدة
+<select id="ruleStatus">
+<option value="published" selected>منشورة ومفعلة (Published)</option>
+<option value="draft">مسودة قيد التجربة (Draft)</option>
+<option value="disabled">معطلة مؤقتاً (Disabled)</option>
+</select>
+</label>
+</div>
+<label>📝 شرح القاعدة (اختياري - يوضح لماذا يتصرف البوت هكذا)
+<textarea id="explanation" placeholder="مثال: عندما يفتح شريكي 90 وأملك الولد في لونه أرفع له العقد بـ +10 نقاط..."></textarea>
+</label>
+<div class="section-header-row">
+<h3>1️⃣ الشروط (متى يطبق البوت هذه القاعدة؟)</h3>
+<button type="button" id="addCondition" class="secondary">+ إضافة شرط جديد</button>
+</div>
+<p class="hint-text">يجب أن تتحقق <b>جميع</b> الشروط التالية معاً في يد البوت حتى ينفذ القرار:</p>
+<div id="conditions"></div>
+<h3>2️⃣ قرار البوت (ماذا يفعل عند تحقق الشروط؟)</h3>
+<div class="row">
+<label>🎯 نوع القرار (الإجراء)
+<select id="actionType">
+<option value="bid">📢 مزايدة / رفع العقد (Bid)</option>
+<option value="pass">❌ قول باس (Pass)</option>
+<option value="contre">🔥 إعلان كونتري (Contré 320)</option>
+<option value="surcontre">⚡ إعلان سوركونتري (Surcontré 640)</option>
+</select>
+</label>
+<label id="suitSourceWrap">♠️♥️ اللون الذي يزايد به البوت
+<select id="suitSource">
+<option value="partnerOriginalSuit">نفس لون فتحة الشريك الأصلية</option>
+<option value="bestSuit">أقوى لون موجود في يد البوت</option>
+<option value="currentContractSuit">نفس لون العقد الحالي على الطاولة</option>
+<option value="spades">سباطة ♠ (Spades)</option>
+<option value="hearts">كوب ♥ (Hearts)</option>
+<option value="clubs">فلوس ♣ (Clubs)</option>
+<option value="diamonds">ديناري ♦ (Diamonds)</option>
+</select>
+</label>
+</div>
+<div class="row" id="bidCalcRow">
+<label>🧮 طريقة حساب رقم المزايدة
+<select id="calculation">
+<option value="partner_original_plus">فتحة الشريك الأصلية + مقدار الزيادة</option>
+<option value="current_plus">العقد الحالي على الطاولة + مقدار الزيادة</option>
+<option value="fixed">رقم فتحة ثابت ومحدد</option>
+</select>
+</label>
+<label id="incrementWrap">➕ مقدار الزيادة (+10، +20...)
+<input id="increment" type="number" value="10" step="10" min="10" max="100">
+</label>
+<label id="fixedValueWrap">🎯 الرقم الثابت (90 إلى 160 أو 500)
+<input id="fixedValue" type="number" value="90" step="10" min="90" max="500">
+</label>
+</div>
+<div class="checks">
+<label class="check-item">
+<input id="mustBeat" type="checkbox" checked>
+<span>ضمان أن تكون المزايدة أعلى من الرقم الحالي على الطاولة</span>
+</label>
+<label class="check-item">
+<input id="extraStep" type="checkbox">
+<span>إذا تدخل الخصم، ارفع +20 فوق رقم الخصم (لدعم V+9)</span>
+</label>
+<label class="check-item highlight-think">
+<input id="thinking" type="checkbox">
+<span>⏱️ تشغيل ساعة التفكير (Tik-Tak) لمدة ثانيتين قبل نطق القرار</span>
+</label>
+</div>
+<!-- صندوق المعاينة الفورية للقاعدة بالعربية -->
+<div class="preview-box">
+<div class="preview-title">👁️ قراءة القاعدة باللغة العربية (معاينة فورية):</div>
+<div id="arabicRulePreview" class="preview-content"></div>
+</div>
+<div class="actions">
+<button type="submit" class="btn-save">💾 حفظ القاعدة الآن</button>
+<button type="button" id="newRule" class="secondary">📄 تفريغ لقاعدة جديدة</button>
+</div>
+<div id="message" aria-live="polite"></div>
+</form>
+</article>
+<!-- القسم الأيسر: قائمة القواعد المحفوظة + محاكي الاختبار -->
+<article>
+<div class="section-header-row">
+<h2>📚 القواعد المحفوظة حالياً (<span id="rulesCount">0</span>)</h2>
+</div>
+<p class="hint-text">يقوم السيرفر بفحص القواعد المنشورة بالترتيب من الأولوية الأعلى إلى الأقل قبل اتخاذ قرار البوت.</p>
+<div id="rules"></div>
+</article>
+</section>
+</main>
+<script src="/admin/bot-rules.js"></script>
+</body>
+</html>

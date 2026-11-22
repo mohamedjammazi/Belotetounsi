@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧠 العقل التونسي - لوحة التعلم الذاتي</title>
+<style>
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#f8fafc;margin:0;padding:16px;}
+.wrap{max-width:1100px;margin:0 auto;}
+h1{color:#fbbf24;text-align:center;margin:0 0 4px;font-size:1.4rem;}
+.sub{text-align:center;color:#94a3b8;margin-bottom:16px;font-size:.85rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:12px;text-align:center;}
+.val{font-size:1.6rem;font-weight:900;color:#fbbf24;}
+.lbl{font-size:.7rem;color:#94a3b8;margin-top:3px;}
+.bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+button{background:#16a34a;color:#fff;border:0;padding:10px 16px;border-radius:9px;font-weight:800;cursor:pointer;font-size:.85rem;}
+button.red{background:#dc2626;} button.blue{background:#0284c7;} button.gold{background:#ca8a04;} button.purple{background:#7c3aed;}
+#msg{max-width:640px;margin:0 auto 12px;padding:10px;border-radius:9px;display:none;text-align:center;font-weight:700;font-size:.85rem;}
+.ok{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid #16a34a;}
+.err{background:rgba(239,68,68,.15);color:#f87171;border:1px solid #dc2626;}
+#apiLine{text-align:center;font-size:.7rem;color:#64748b;margin-bottom:10px;}
+table{width:100%;border-collapse:collapse;font-size:.75rem;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;}
+th,td{padding:8px 5px;border-bottom:1px solid rgba(255,255,255,.08);text-align:right;}
+th{background:rgba(251,191,36,.15);color:#fbbf24;}
+.hi{color:#4ade80;font-weight:800;} .lo{color:#f87171;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;overflow:auto;}
+.modal-content{background:#1e293b;margin:40px auto;padding:20px;border-radius:12px;max-width:95%;width:900px;max-height:80vh;overflow:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.modal-title{color:#fbbf24;font-size:1.1rem;font-weight:900;margin:0;}
+.modal-close{background:#dc2626;color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:800;}
+.modal-actions{display:flex;gap:8px;margin-bottom:12px;}
+pre{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;overflow:auto;max-height:60vh;font-size:.7rem;line-height:1.4;white-space:pre-wrap;word-break:break-all;}
+.suspect-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px;margin:10px 0;font-size:.75rem;}
+.suspect-box h3{color:#f87171;margin:0 0 6px;font-size:.85rem;}
+.suspect-item{background:rgba(0,0,0,.2);padding:6px;margin:4px 0;border-radius:4px;font-family:monospace;font-size:.65rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧠 العقل التونسي</h1>
+<div class="sub">نظام التعلم الذاتي للبلوت التونسي — يتعلم وحدو بدون تدخل أدمن</div>
+<div id="apiLine">جاري فحص الاتصال...</div>
+<div class="grid">
+<div class="card"><div class="val" id="stMem">-</div><div class="lbl">قرارات بالذاكرة</div></div>
+<div class="card"><div class="val" id="stWr">-</div><div class="lbl">نسبة النجاح</div></div>
+<div class="card"><div class="val" id="stQ">-</div><div class="lbl">مواقف لعب متعلَّمة</div></div>
+<div class="card"><div class="val" id="stEps">-</div><div class="lbl">استكشاف ε</div></div>
+<div class="card"><div class="val" id="stRules">-</div><div class="lbl">قواعد متطورة</div></div>
+<div class="card"><div class="val" id="stHuman">-</div><div class="lbl">عينات من بشر</div></div>
+</div>
+<div class="bar">
+<button class="blue" onclick="loadAll()">🔄 تحديث</button>
+<button class="gold" onclick="forceEvolve()">🧬 طوّر القواعد الآن</button>
+<button id="toggleBtn" onclick="toggleBrain()">⏸️ إيقاف التعلم</button>
+<button class="red" onclick="clearMemory()">🗑️ مسح الذاكرة</button>
+</div>
+<div class="bar">
+<button class="purple" onclick="showRawData('q')">📊 عرض جدول Q</button>
+<button class="purple" onclick="showRawData('n')">🔢 عرض جدول العد (N)</button>
+<button class="purple" onclick="showRawData('memory')">🧠 عرض الذاكرة</button>
+<button class="gold" onclick="exportAll()">📦 تصدير الكل</button>
+</div>
+<div class="bar">
+<button class="red" onclick="showSuspectStates()">🚩 حالات مشبوهة</button>
+</div>
+<div id="msg"></div>
+<h2 style="color:#fbbf24;font-size:1rem;">📚 القواعد المتعلمة تلقائياً</h2>
+<table><thead><tr><th>القاعدة</th><th>النجاح</th><th>عينات</th><th>أولوية</th></tr></thead><tbody id="rulesBody"><tr><td colspan="4" style="text-align:center;color:#94a3b8;">جاري التحميل...</td></tr></tbody></table>
+</div>
+<div id="rawModal" class="modal">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="modalTitle">عرض البيانات</h3>
+<button class="modal-close" onclick="closeModal()">✕ إغلاق</button>
+</div>
+<div class="modal-actions">
+<button class="blue" onclick="copyModalContent()">📋 نسخ الكل</button>
+<button class="gold" onclick="downloadModalContent()">💾 تحميل كملف</button>
+</div>
+<pre id="modalContent"></pre>
+</div>
+</div>
+<script>
+let pass = sessionStorage.getItem('beloteAdminKey') || prompt('كلمة مرور الأدمن:') || '';
+if (pass) sessionStorage.setItem('beloteAdminKey', pass);
+sessionStorage.setItem('beloteAdminKey', pass);
+let enabled = true, apiMode = '', modalData = '';
+function msg(t, ok){ const el=document.getElementById('msg'); el.textContent=t; el.className=ok?'ok':'err'; el.style.display='block'; setTimeout(()=>el.style.display='none',4500); }
+async function apiGet(urls){
+  for (const u of urls) {
+    try {
+      const r = await fetch(u, { headers:{ 'x-admin-passcode': pass } });
+      if (r.ok) { const j = await r.json(); if (j && j.ok !== false) { apiMode = u; return j; } }
+    } catch(e){}
+  }
+  return null;
+}
+async function apiPost(urls, body){
+  for (const u of urls) {
+    try {
+      const r = await fetch(u, { method:'POST', headers:{ 'x-admin-passcode': pass, 'Content-Type':'application/json' }, body: JSON.stringify(body||{}) });
+      if (r.ok) { const j = await r.json(); if (j) { apiMode = u; return j; } }
+    } catch(e){}
+  }
+  return null;
+}
+function normStats(s){
+  if (!s) return null;
+  const wr = (s.winRate !== undefined && s.winRate > 1) ? s.winRate : Math.round((s.recentWinRate||s.winRate||0)*100);
+  return {
+    mem: s.memorySize || s.totalDecisions || 0,
+    wr: wr,
+    q: s.qStates || 0,
+    eps: s.epsilon !== undefined ? Math.round(s.epsilon*100)+'%' : '-',
+    rules: s.learnedRules !== undefined ? s.learnedRules : (s.evolvedRules || 0),
+    human: s.humanSamples || 0,
+    enabled: s.enabled !== false
+  };
+}
+async function loadAll(){
+  const j = await apiGet(['/api/admin/brain-stats','/api/admin/learning-stats']);
+  const line = document.getElementById('apiLine');
+  if (!j) { line.textContent = '❌ ما قدرناش نتصلو بالـ API — تأكد أن server.js v18 شغال وأن كلمة السر صحيحة'; msg('فشل الاتصال بالسيرفر', false); return; }
+  line.textContent = '✅ متصل عبر: ' + apiMode.replace('/api/admin/','');
+  const s = normStats(j.stats || j);
+  if (!s) { line.textContent = '❌ صيغة إحصائيات غير معروفة'; return; }
+  enabled = s.enabled;
+  document.getElementById('stMem').textContent = Number(s.mem).toLocaleString();
+  document.getElementById('stWr').textContent = s.wr + '%';
+  document.getElementById('stQ').textContent = Number(s.q).toLocaleString();
+  document.getElementById('stEps').textContent = s.eps;
+  document.getElementById('stRules').textContent = s.rules;
+  document.getElementById('stHuman').textContent = s.human;
+  document.getElementById('toggleBtn').textContent = enabled ? '⏸️ إيقاف التعلم' : '▶️ تشغيل التعلم';
+  await loadRules();
+}
+async function loadRules(){
+  let rules = null;
+  const j1 = await apiGet(['/api/admin/evolved-rules']);
+  if (j1 && Array.isArray(j1.rules)) rules = j1.rules;
+  else {
+    const j2 = await apiGet(['/api/admin/bot-rules']);
+    if (j2 && Array.isArray(j2.rules)) rules = j2.rules.filter(r => String(r.id).indexOf('LEARNED-') === 0);
+  }
+  const tb = document.getElementById('rulesBody');
+  if (!rules || !rules.length) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">لا توجد قواعد متعلمة بعد — العب جولات وسيبدأ التطور تلقائياً كل 10 جولات</td></tr>'; return; }
+  rules.sort((a,b)=>(b.winRate||0)-(a.winRate||0));
+  tb.innerHTML = rules.slice(0,30).map(r => `<tr><td>${(r.name||r.id).replace(/</g,'&lt;')}</td><td class="${(r.winRate||0)>=0.65?'hi':'lo'}">${Math.round((r.winRate||0)*100)}%</td><td>${r.sampleSize||'-'}</td><td>${r.priority||'-'}</td></tr>`).join('');
+}
+async function forceEvolve(){
+  const j = await apiPost(['/api/admin/force-evolve','/api/admin/run-learning']);
+  if (j && (j.evolved || j.ok)) { msg(`✅ تطور: +${j.added||0} قاعدة / -${j.removed||0} ضعيفة`, true); loadAll(); }
+  else msg('❌ فشل التطور — البيانات غير كافية أو التعلم موقوف', false);
+}
+async function toggleBrain(){
+  const j = await apiPost(['/api/admin/brain-toggle'], { enabled: !enabled });
+  if (j) { enabled = !!j.enabled; msg(enabled ? '✅ التعلم مشتغل' : '⏸️ التعلم موقوف', true); loadAll(); }
+  else msg('❌ السيرفر ما يدعمش التبديل (server.js قديم)', false);
+}
+async function clearMemory(){
+  if (!confirm('مسح كل ذاكرة التعلم؟ لا يمكن التراجع!')) return;
+  const j = await apiPost(['/api/admin/clear-brain-memory']);
+  if (j && j.ok) { msg('✅ تم مسح الذاكرة', true); loadAll(); }
+  else msg('❌ فشل المسح', false);
+}
+async function showRawData(type){
+  let endpoint = '', title = '';
+  if (type === 'q') { endpoint = '/api/admin/brain-qtable'; title = '📊 جدول Q (قيم التعلم)'; }
+  else if (type === 'n') { endpoint = '/api/admin/brain-counts'; title = '🔢 جدول العد (عدد الزيارات)'; }
+  else if (type === 'memory') { endpoint = '/api/admin/brain-memory'; title = '🧠 الذاكرة (كل القرارات)'; }
+  msg('جاري تحميل ' + title + '...', true);
+  const j = await apiGet([endpoint]);
+  if (!j || !j.data) { msg('❌ فشل تحميل البيانات', false); return; }
+  modalData = JSON.stringify(j.data, null, 2);
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalContent').textContent = modalData;
+  document.getElementById('rawModal').style.display = 'block';
+}
+function closeModal(){ document.getElementById('rawModal').style.display = 'none'; }
+function copyModalContent(){
+  navigator.clipboard.writeText(modalData).then(() => msg('✅ تم النسخ!', true)).catch(() => msg('❌ فشل النسخ', false));
+}
+function downloadModalContent(){
+  const blob = new Blob([modalData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'brain-data-' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  msg('✅ تم التحميل!', true);
+}
+async function exportAll(){
+  msg('جاري تصدير كل البيانات...', true);
+  const j = await apiGet(['/api/admin/brain-export']);
+  if (!j || !j.data) { msg('❌ فشل التصدير', false); return; }
+  modalData = JSON.stringify(j.data, null, 2);
+  document.getElementById('modalTitle').textContent = '📦 تصدير كل البيانات';
+  document.getElementById('modalContent').textContent = modalData;
+  document.getElementById('rawModal').style.display = 'block';
+  setTimeout(() => downloadModalContent(), 500);
+}
+async function showSuspectStates(){
+  msg('جاري تحليل الحالات المشبوهة...', true);
+  const j = await apiGet(['/api/admin/brain-suspect']);
+  if (!j || !j.suspects) { msg('❌ فشل التحليل', false); return; }
+  const suspects = j.suspects;
+  let html = '<div class="suspect-box"><h3>🚩 حالات مشبوهة: ' + suspects.total + '</h3>';
+  if (suspects.total === 0) {
+    html += '<div style="color:#4ade80;">✅ لا توجد حالات مشبوهة — الجدول نظيف!</div>';
+  } else {
+    if (suspects.overPartner) {
+      html += '<div style="color:#f87171;font-weight:800;margin-top:8px;">⚠️ قص فوق شريك رابح: ' + suspects.overPartner.length + '</div>';
+      suspects.overPartner.slice(0, 5).forEach(s => {
+        html += '<div class="suspect-item">' + s.state + ' → ' + s.action + ' (Q=' + s.value + ', visits=' + s.visits + ')</div>';
+      });
+    }
+    if (suspects.avoidWin) {
+      html += '<div style="color:#f87171;font-weight:800;margin-top:8px;">⚠️ تجنب الربح: ' + suspects.avoidWin.length + '</div>';
+      suspects.avoidWin.slice(0, 5).forEach(s => {
+        html += '<div class="suspect-item">' + s.state + ' → ' + s.action + ' (Q=' + s.value + ', visits=' + s.visits + ')</div>';
+      });
+    }
+    if (suspects.negativeWin) {
+      html += '<div style="color:#f87171;font-weight:800;margin-top:8px;">⚠️ قيم سالبة على WIN_CHEAP: ' + suspects.negativeWin.length + '</div>';
+      suspects.negativeWin.slice(0, 5).forEach(s => {
+        html += '<div class="suspect-item">' + s.state + ' WIN_CHEAP=' + s.value + ' (visits=' + s.visits + ')</div>';
+      });
+    }
+  }
+  html += '</div>';
+  document.getElementById('modalTitle').textContent = '🚩 تحليل الحالات المشبوهة';
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('rawModal').style.display = 'block';
+}
+loadAll();
+setInterval(loadAll, 25000);
+</script>
+</body>
+</html>

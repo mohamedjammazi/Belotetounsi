@@ -1,0 +1,1 @@
+{"enabled":true,"evolveEveryRounds":10,"minSamplesForRule":8,"minWinRateForRule":0.62,"maxLearnedRules":60,"epsilon":0.04,"epsilonDecay":0.9,"minEpsilon":0.04,"learningRate":0.35,"periodicMinutes":30}

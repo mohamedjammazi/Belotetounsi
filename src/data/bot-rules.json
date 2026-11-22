@@ -1,0 +1,582 @@
+{
+  "version": 5,
+  "rules": [
+    {
+      "id": "TUN-90-THINK-PASS",
+      "name": "🔔 90 مع تفكير (أتو ضعيف) → Pass",
+      "phase": "bidding",
+      "priority": 950,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasThinking",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "pass",
+        "thinking": false
+      },
+      "explanation": "الشريك فتح 90 مع Tik-Tak = عنده 2 آس لكن الأتو ضعيف (R+D+10). لا تزد، وبدّل اللون إذا تقدر."
+    },
+    {
+      "id": "TUN-90-DIRECT-V9",
+      "name": "🔔 90 مباشر + V+9 → +20",
+      "phase": "bidding",
+      "priority": 960,
+      "status": "published",
+      "enabled": true,
+      "explanation": "الشريك فتح 90 مباشرة = V+9+D. أنا عندي V+9 = +20.",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "suitSource": "partnerOriginalSuit",
+        "calculation": "partner_original_plus",
+        "increment": 20,
+        "fixedValue": 90,
+        "mustBeatCurrent": true,
+        "competitiveExtraStep": true,
+        "thinking": false
+      },
+      "fingerprint": "4e010823b3096006d5f958327f8781c99cf72c1ca1e07c9b9b6041218b8a0c2e",
+      "updatedAt": "2026-11-15T14:58:45.402Z"
+    },
+    {
+      "id": "TUN-90-DIRECT-V",
+      "name": "🔔 90 مباشر + V → +10",
+      "phase": "bidding",
+      "priority": 940,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 90 مباشرة. أنا عندي V = +10."
+    },
+    {
+      "id": "TUN-90-DIRECT-9",
+      "name": "🔔 90 مباشر + 9 → +10",
+      "phase": "bidding",
+      "priority": 935,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 90 مباشرة. أنا عندي 9 = +10."
+    },
+    {
+      "id": "TUN-90-DIRECT-2CARDS",
+      "name": "🔔 90 مباشر + 2 كوارط → Tik-Tak ثم Pass",
+      "phase": "bidding",
+      "priority": 700,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerSuitCount",
+          "operator": "eq",
+          "value": 2
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        }
+      ],
+      "action": {
+        "type": "pass",
+        "thinking": true
+      },
+      "explanation": "إشارة تونسية: 2 كوارط في لون الشريك = Tik-Tak ثم Pass."
+    },
+    {
+      "id": "TUN-90-DIRECT-3CARDS",
+      "name": "🔔 90 مباشر + 3 كوارط → Tik-Tak ثم +10",
+      "phase": "bidding",
+      "priority": 710,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerSuitCount",
+          "operator": "eq",
+          "value": 3
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true,
+        "thinking": true
+      },
+      "explanation": "إشارة تونسية: 3 كوارط = Tik-Tak ثم +10."
+    },
+    {
+      "id": "TUN-90-DIRECT-4PLUS",
+      "name": "🔔 90 مباشر + 4+ كوارط → Tik-Tak ثم +10",
+      "phase": "bidding",
+      "priority": 715,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerSuitCount",
+          "operator": "gte",
+          "value": 4
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": false
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true,
+        "thinking": true
+      },
+      "explanation": "إشارة تونسية: 4+ كوارط = Tik-Tak ثم +10."
+    },
+    {
+      "id": "TUN-110-3ACES",
+      "name": "🔔 110 + 3 آسات → +30 (Capot)",
+      "phase": "bidding",
+      "priority": 980,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 110
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceCount",
+          "operator": "gte",
+          "value": 3
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 30,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 110 (أتو كامل + 4 ألوان). أنا عندي 3 آسات = Capot! +30."
+    },
+    {
+      "id": "TUN-110-2ACETEN",
+      "name": "🔔 110 + 2 Ace+10 combos → +20",
+      "phase": "bidding",
+      "priority": 970,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 110
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceTenCombos",
+          "operator": "gte",
+          "value": 2
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 20,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 110. عندي 2 Ace+10 combos = +20."
+    },
+    {
+      "id": "TUN-110-1ACE",
+      "name": "🔔 110 + Ace واحد → +10",
+      "phase": "bidding",
+      "priority": 960,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 110
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceCount",
+          "operator": "eq",
+          "value": 1
+        },
+        {
+          "field": "mySideAceTenCombos",
+          "operator": "lt",
+          "value": 2
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 110. عندي Ace واحد = +10."
+    },
+    {
+      "id": "TUN-120-3ACES",
+      "name": "🔔 120 + 3 آسات → +20",
+      "phase": "bidding",
+      "priority": 975,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 120
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceCount",
+          "operator": "gte",
+          "value": 3
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 20,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 120 (أتو كامل + لون مقطوع). عندي 3 آسات = +20."
+    },
+    {
+      "id": "TUN-120-2ACES",
+      "name": "🔔 120 + 2 آسات → +10",
+      "phase": "bidding",
+      "priority": 965,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 120
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceCount",
+          "operator": "eq",
+          "value": 2
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 120. عندي 2 آسات = +10."
+    },
+    {
+      "id": "TUN-130-3ACES",
+      "name": "🔔 130 + 3 آسات → +10",
+      "phase": "bidding",
+      "priority": 970,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 130
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "mySideAceCount",
+          "operator": "gte",
+          "value": 3
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 130 (أتو كامل + لونين مقطوعين). عندي 3 آسات = +10."
+    },
+    {
+      "id": "TUN-140-ALLTENS",
+      "name": "🔔 140 + كل الـ 10s → +10",
+      "phase": "bidding",
+      "priority": 970,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 140
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "myTenCountOutsideTrump",
+          "operator": "eq",
+          "value": 3
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 10,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true
+      },
+      "explanation": "الشريك فتح 140 (أتو كامل + يبحث عن 10). عندي كل الـ 10s = +10."
+    },
+    {
+      "name": "+20 si v+14",
+      "phase": "bidding",
+      "priority": 800,
+      "status": "published",
+      "enabled": true,
+      "explanation": "",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "suitSource": "partnerOriginalSuit",
+        "calculation": "current_plus",
+        "increment": 20,
+        "fixedValue": 90,
+        "mustBeatCurrent": true,
+        "competitiveExtraStep": false,
+        "thinking": false
+      },
+      "id": "RULE-MWHYKVV6",
+      "fingerprint": "a817935711cba06e886dae4bb9564992cec60fdfad37fb104d5314cf6acb3b5a",
+      "updatedAt": "2026-11-15T14:57:31.218Z",
+      "createdAt": "2026-11-15T14:57:31.218Z"
+    }
+  ]
+}

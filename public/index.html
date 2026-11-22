@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#04170d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بلوت تونسي">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/icon.svg">
+<title>بلوت تونسي — صالون الكونترا</title>
+<link rel="stylesheet" href="/css/style.css?v=50">
+</head>
+<body>
+<div id="toastBox"></div>
+<input type="text" id="playerNameInput" style="display:none" maxlength="18">
+
+<div id="installAppModal" style="display:none">
+  <div class="install-modal-card">
+    <div class="sheet-head"><h3>📲 ثبّت اللعبة على تليفونك</h3><button type="button" class="btn btn-red" style="min-height:34px;padding:4px 12px" onclick="closeInstallModal()">✖</button></div>
+    <div class="install-steps-box">
+      <div>🤖 <b>أندرويد (Chrome):</b> النقاط الثلاث ⋮ ثم <b>"تثبيت التطبيق"</b>.</div>
+      <hr style="border-color:rgba(255,255,255,.14);margin:9px 0">
+      <div>🍏 <b>آيفون (Safari):</b> زر المشاركة ⬆️ ثم <b>"إضافة إلى الشاشة الرئيسية"</b>.</div>
+    </div>
+    <button type="button" class="btn btn-gold btn-big" style="margin-top:13px" onclick="closeInstallModal()">فهمت 👍</button>
+  </div>
+</div>
+
+<div id="lobbyView">
+  <div class="lobby-container">
+    <div class="lobby-header">
+      <div class="brand-title">
+        <img src="/icon.svg" alt="Belote" class="brand-logo-img">
+        <div>
+          <h1>بلوت تونسي — صالون الكونترا</h1>
+          <span id="connStatusBadge" class="conn-badge">قاعدين نربطو بالسيرفر...</span>
+        </div>
+      </div>
+      <div class="wallet-row">
+        <span id="euLobbyChip" class="eu-chip" title="حسابي">🪙 <b>0</b></span>
+        <button type="button" class="eu-btn" id="euAccountBtn">👤 حسابي</button>
+        <button type="button" class="eu-btn blue" id="euGoogleBtn" style="display:none">🔗 Google</button>
+        <button type="button" class="eu-btn gold" id="euAdsBtn" style="display:none">📺 إشهار</button>
+      </div>
+      <div class="quick-actions">
+        <button type="button" class="btn btn-green btn-big" onclick="quickJoinTable()">⚡ العب مباشرة</button>
+        <button type="button" class="btn btn-gold" onclick="var c=document.getElementById('createCard');c.open=true;c.scrollIntoView({behavior:'smooth',block:'center'})">➕ اعمل طاولة</button>
+        <button type="button" class="icon-btn" onclick="enterImmersiveLandscape(false)" title="ملء الشاشة">⛶</button>
+        <button type="button" class="icon-btn" id="installAppBtn" onclick="triggerAppInstall()" title="ثبّت التطبيق">📲</button>
+      </div>
+    </div>
+
+    <div id="pwaInstallBanner" class="pwa-banner"></div>
+    <div id="adminLoginPanel" class="panel-card" style="display:none">
+      <input type="password" id="adminPassInput" style="display:none">
+      <span id="adminStatusLabel" class="muted" style="display:none"></span>
+    </div>
+
+    <div class="panel-card" id="hallCard">
+      <h3>🎱 قاعة الطاولات — اسحب للجوانب باش تختار</h3>
+      <div class="eu-carousel" id="euCarousel" dir="ltr">
+        <button type="button" class="car-arrow" id="carPrev" aria-label="السابق">‹</button>
+        <div class="car-viewport" id="carViewport"><div class="car-track" id="carTrack"></div></div>
+        <button type="button" class="car-arrow" id="carNext" aria-label="التالي">›</button>
+      </div>
+      <div class="car-dots" id="carDots"></div>
+      <div class="hint" id="euHallNote" style="margin-top:10px"></div>
+    </div>
+
+    <details class="panel-card" id="liveRoomsCard">
+      <summary>🟢 الطاولات المفتوحة الآن (<span id="roomsCountSpan">0</span>)</summary>
+      <div class="search-row">
+        <input type="text" id="searchRoomInput" class="input-field" placeholder="لوّج بالاسم أو الكود..." oninput="renderLobbyRooms()">
+      </div>
+      <div id="roomsListContainer" class="rooms-list"></div>
+    </details>
+
+    <details class="panel-card" id="createCard">
+      <summary>➕ اعمل طاولة جديدة</summary>
+      <div class="grid-2">
+        <input type="text" id="newRoomName" class="input-field" placeholder="اسم الطاولة (اختياري)">
+        <select id="newRoomScore" class="input-field">
+          <option value="2000" selected>هدف 2000 نقطة</option>
+          <option value="1500">هدف 1500 نقطة</option>
+          <option value="1000">هدف 1000 نقطة</option>
+        </select>
+      </div>
+      <div style="font-size:.74rem;font-weight:900;color:#e6b455;margin-top:10px">🎴 مستوى الطاولة:</div>
+      <div class="eu-tiers" id="euCreateTierRow"></div>
+      <label class="sw-row"><input type="checkbox" id="newRoomPrivate"> 🔒 طاولة مغلقة (باللينك/الكود) — رسوم رمزية</label>
+      <button type="button" class="btn btn-green btn-big" style="margin-top:12px" onclick="createRoom()">اعمل الطاولة</button>
+    </details>
+  </div>
+</div>
+
+<div id="gameView">
+  <div class="amb amb-a"></div>
+  <div class="amb amb-b"></div>
+  <div class="grain"></div>
+  <div id="cwProbe" aria-hidden="true"></div>
+
+  <div class="stage">
+    <header class="bar">
+      <div class="hud">
+        <button type="button" id="scorePaperBtn" onclick="toggleScorePaperModal()">
+          <span class="sp-ico">📝</span>
+          <span class="sp-nous">نحن <b id="paperNousQuick">0</b></span>
+          <span class="sp-sep"></span>
+          <span class="sp-vous">هم <b id="paperVousQuick">0</b></span>
+        </button>
+        <div class="top-left-hud">
+          <div class="game-type">بلوت تونسي</div>
+          <div class="game-points" id="hudTargetScore">الهدف 2000</div>
+          <div id="hudTrumpInfo">نستناو في الفتح</div>
+        </div>
+        <div class="pot-chip" id="potBadge"><b>0</b><small>نقطة</small></div>
+      </div>
+      <div id="turnBanner"></div>
+      <div class="top-right-actions">
+        <button type="button" class="icon-btn" onclick="toggleChatMinimize()" title="شات">💬</button>
+        <button type="button" class="icon-btn" id="soundToggleBtn" onclick="toggleSoundMute()" title="الصوت">🔊</button>
+        <button type="button" class="icon-btn" onclick="togglePointsTableModal()" title="النقاط">📊</button>
+        <button type="button" class="icon-btn" onclick="requestFullscreenMode()" title="ملء الشاشة">⛶</button>
+        <button type="button" class="icon-btn exit-btn" onclick="leaveCurrentRoom()" title="اخرج">✖</button>
+      </div>
+    </header>
+
+    <main class="field">
+      <div class="table-bg">
+        <div class="felt">
+          <div class="felt-inner">
+            <div class="felt-inlay"></div>
+            <div class="felt-corner tl"></div><div class="felt-corner tr"></div>
+            <div class="felt-corner bl"></div><div class="felt-corner br"></div>
+            <div class="felt-mark"><span>♠</span><span>♥</span><span>♣</span><span>♦</span></div>
+            <div class="felt-glow"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="seat-wrap seat-top" id="wrapTop">
+        <div id="fanTop" class="opponent-fan"></div>
+        <div id="slotTop" class="player-slot pod-h">
+          <div class="avatar-box"><div id="dealerTop" class="dealer-token">D</div><span>🤖</span></div>
+          <div class="player-meta">
+            <div class="player-name" id="nameTop">نستناو في لاعب...</div>
+            <div class="player-round-pts" id="roundPtsTop">0 نقطة</div>
+            <div class="player-total-pts" id="totalPtsTop">0 / 2000</div>
+            <div id="trumpBadgeTop" class="badge-slot"></div>
+          </div>
+          <div id="speechTop" class="player-speech-bubble"></div>
+        </div>
+      </div>
+
+      <aside class="rail rail-left">
+        <div class="seat-wrap seat-side" id="wrapLeft">
+          <div id="fanLeft" class="opponent-fan"></div>
+          <div id="slotLeft" class="player-slot pod-v team-blue">
+            <div class="avatar-box"><div id="dealerLeft" class="dealer-token">D</div><span>👤</span></div>
+            <div class="player-meta">
+              <div class="player-name" id="nameLeft">نستناو...</div>
+              <div class="player-round-pts" id="roundPtsLeft">0 نقطة</div>
+              <div class="player-total-pts" id="totalPtsLeft">0 / 2000</div>
+              <div id="trumpBadgeLeft" class="badge-slot"></div>
+            </div>
+            <div id="speechLeft" class="player-speech-bubble"></div>
+          </div>
+        </div>
+        <section class="side-card jarya-card" id="lastJaryaPanel" dir="ltr">
+          <div class="sc-title" dir="rtl">🎲 آخر جَرية</div>
+          <div class="lj-grid" id="ljGrid" dir="ltr"></div>
+        </section>
+      </aside>
+
+      <section class="table-core">
+        <div id="centerTableArea"></div>
+        <div id="biddingBox">
+          <div id="biddingTitle">المزايدة</div>
+          <div id="currentContractBanner">مازال حتى واحد ما فتح</div>
+          <div id="biddingTurnText"></div>
+          <div id="myBidControls">
+            <div class="bid-values-grid" id="bidValuesContainer" dir="ltr"></div>
+            <div class="suit-picker-btns" dir="ltr">
+              <button type="button" class="suit-btn black" data-suit="spades" onclick="sendTunisianBid('bid','spades')">♠</button>
+              <button type="button" class="suit-btn red" data-suit="hearts" onclick="sendTunisianBid('bid','hearts')">♥</button>
+              <button type="button" class="suit-btn black suit-btn-clubs" data-suit="clubs" onclick="sendTunisianBid('bid','clubs')">♣</button>
+              <button type="button" class="suit-btn red suit-btn-diamonds" data-suit="diamonds" onclick="sendTunisianBid('bid','diamonds')">♦</button>
+            </div>
+            <div class="bid-actions">
+              <button type="button" class="btn btn-red" onclick="sendTunisianBid('pass')">❌ باس</button>
+              <button type="button" class="btn btn-dark" onclick="sendThinkingSignal()">⏱️ خمّم</button>
+              <button type="button" class="btn btn-gold" id="btnContre" style="display:none" onclick="sendTunisianBid('contre')">🔥 كونتري</button>
+              <button type="button" class="btn btn-blue" id="btnSurcontre" style="display:none" onclick="sendTunisianBid('surcontre')">⚡ سوركونتري</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rail rail-right">
+        <div class="seat-wrap seat-side" id="wrapRight">
+          <div id="fanRight" class="opponent-fan"></div>
+          <div id="slotRight" class="player-slot pod-v team-blue">
+            <div class="avatar-box"><div id="dealerRight" class="dealer-token">D</div><span>👤</span></div>
+            <div class="player-meta">
+              <div class="player-name" id="nameRight">نستناو...</div>
+              <div class="player-round-pts" id="roundPtsRight">0 نقطة</div>
+              <div class="player-total-pts" id="totalPtsRight">0 / 2000</div>
+              <div id="trumpBadgeRight" class="badge-slot"></div>
+            </div>
+            <div id="speechRight" class="player-speech-bubble"></div>
+          </div>
+        </div>
+        <section class="side-card tricks-card" id="tricksCard">
+          <div class="sc-title">🏁 الجَريات</div>
+          <div class="tk-pips" id="tkPips"></div>
+          <div class="tk-rows">
+            <div class="tk-row tk-nous"><span>نحن</span><b id="tkNous">0</b></div>
+            <div class="tk-row tk-vous"><span>هم</span><b id="tkVous">0</b></div>
+          </div>
+          <div class="tk-note" id="tkNote">الفرشة +10 لآخر جَرية</div>
+        </section>
+      </aside>
+
+      <footer id="handRow">
+        <div class="me">
+          <div id="slotBottom" class="player-slot pod-h">
+            <div class="avatar-box"><div id="dealerBottom" class="dealer-token">D</div><span>😎</span></div>
+            <div class="player-meta">
+              <div class="player-name" id="nameBottom">إنتي</div>
+              <div class="player-round-pts" id="roundPtsBottom">0 نقطة</div>
+              <div class="player-total-pts" id="totalPtsBottom">0 / 2000</div>
+              <div id="trumpBadgeBottom" class="badge-slot"></div>
+            </div>
+            <div id="speechBottom" class="player-speech-bubble"></div>
+          </div>
+        </div>
+        <div class="hand-wrap">
+          <div id="myHandContainer"></div>
+        </div>
+        <div id="playerQuickActionsBar">
+          <button type="button" id="pttVoiceBtn" class="btn btn-green act-round"
+            onmousedown="startPushToTalk(event)" onmouseup="stopPushToTalk(event)" onmouseleave="stopPushToTalk(event)"
+            ontouchstart="startPushToTalk(event)" ontouchend="stopPushToTalk(event)" ontouchcancel="stopPushToTalk(event)"
+            title="اضغط مطولاً للتحدث">🎙️ تكلّم</button>
+          <button type="button" id="beloteArmBtn" class="belote-declare-btn" onclick="toggleBeloteAnnouncement()">🔇 البلوت</button>
+          <button type="button" id="playThinkingBtn" class="btn btn-dark act-round" style="display:none" onclick="sendThinkingSignal()">⏱️ خمّم</button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div id="scorePaperModal" class="sheet" style="display:none">
+    <div class="sheet-head"><h3>📝 ورقة الحساب</h3><button type="button" class="btn btn-red" style="min-height:32px;padding:2px 12px" onclick="toggleScorePaperModal()">✖</button></div>
+    <table class="tbl"><thead><tr><th>#</th><th>الفتحة</th><th>نحن</th><th>هم</th></tr></thead><tbody id="scorePaperRows"></tbody>
+    <tfoot><tr><td colspan="2"><b>المجموع</b></td><td id="scorePaperTotalNous">0</td><td id="scorePaperTotalVous">0</td></tr></tfoot></table>
+    <button type="button" class="btn btn-gold btn-big" onclick="toggleScorePaperModal()">سكّر</button>
+  </div>
+
+  <div id="pointsRefModal" class="sheet" style="display:none">
+    <div class="sheet-head"><h3>📊 نقاط الورق</h3></div>
+    <table class="tbl"><thead><tr><th>الكارطة</th><th>عادي</th><th>الأتو</th></tr></thead><tbody>
+      <tr><td><b>V (ولد)</b></td><td>2</td><td class="g">20</td></tr>
+      <tr><td><b>9</b></td><td>0</td><td class="g">14</td></tr>
+      <tr><td><b>1 (آس)</b></td><td>11</td><td class="g">11</td></tr>
+      <tr><td><b>10</b></td><td>10</td><td class="g">10</td></tr>
+      <tr><td><b>R (ري)</b></td><td>4</td><td class="g">4</td></tr>
+      <tr><td><b>D (دام)</b></td><td>3</td><td class="g">3</td></tr>
+      <tr><td><b>8 / 7</b></td><td>0</td><td class="g">0</td></tr>
+    </tbody></table>
+    <div class="muted" style="text-align:right;line-height:1.7;margin-bottom:11px">• المجموع 152 + 10 فرشة = 162.<br>• البلوت والريبلوت +20.<br>• الكاص: الآحاد 5/6/7 تُكمّل للعشرة العليا.</div>
+    <button type="button" class="btn btn-gold btn-big" onclick="togglePointsTableModal()">سكّر</button>
+  </div>
+
+  <div id="waitingOverlay" class="sheet">
+    <div class="sheet-head"><h3 id="waitingRoomTitle">حضّر الفرق</h3><span id="waitingRoomCode" class="room-id-tag"></span></div>
+    <p class="muted" style="text-align:right">مولى الطاولة يبدّل البلايص (اضغط على بلاصتين) وإلا يعمل قرعة. كي يكملو 4 لاعبين يبدا اللعب.</p>
+    <div class="teams-grid">
+      <div class="team-column t1"><div>🟦 الفريق 1</div><div id="seatBox0" class="team-seat-row" onclick="onSeatClickForSwap(0)"></div><div id="seatBox2" class="team-seat-row" onclick="onSeatClickForSwap(2)"></div></div>
+      <div class="team-column t2"><div>🟧 الفريق 2</div><div id="seatBox1" class="team-seat-row" onclick="onSeatClickForSwap(1)"></div><div id="seatBox3" class="team-seat-row" onclick="onSeatClickForSwap(3)"></div></div>
+    </div>
+    <div id="waitingShareRow"></div>
+    <div id="hostActionButtons" class="row" style="justify-content:center">
+      <button type="button" class="btn btn-dark" onclick="hostRandomizeTeams()">🎲 قرعة</button>
+      <button type="button" class="btn btn-blue" onclick="hostAddBot()">🤖 زيد بوت</button>
+      <button type="button" id="startGameBtn" class="btn btn-gold" onclick="hostStartGame()">▶️ ابدا</button>
+    </div>
+    <div id="guestWaitingNote" class="muted" style="display:none;color:#f5c451;margin-top:9px">⏳ نستناو في مولى الطاولة يبدا اللعب...</div>
+  </div>
+
+  <div id="roundSummaryBox" class="sheet">
+    <h3 id="summaryHeader" style="color:var(--brass);margin-bottom:9px">📊 نتيجة الطرح</h3>
+    <div id="summaryDetails" style="font-size:.85rem;line-height:1.6;margin-bottom:13px"></div>
+    <button type="button" class="btn btn-gold btn-big" onclick="requestNextRound()">▶️ الجَرية الجاية</button>
+  </div>
+
+  <div id="chatWidget" class="minimized">
+    <div class="chat-header" onclick="toggleChatMinimize()"><span>💬 شات الطاولة</span><span id="chatToggleIcon">▲</span></div>
+    <div id="chatBody"></div>
+    <form id="chatForm" onsubmit="sendChatMessage(event)">
+      <input type="text" id="chatInput" placeholder="اكتب مساجك..." maxlength="120">
+      <button type="submit" id="chatSendBtn">➤</button>
+    </form>
+  </div>
+
+  <div id="rotateDeviceOverlay"></div>
+</div>
+
+<script src="/js/state-connection.js?v=50"></script>
+<script src="/js/audio.js?v=50"></script>
+<script src="/js/packets.js?v=50"></script>
+<script src="/js/lobby.js?v=50"></script>
+<script src="/js/table.js?v=50"></script>
+<script src="/js/actions.js?v=50"></script>
+<script src="/js/local-demo.js?v=50"></script>
+<script src="/js/app.js?v=50"></script>
+<script src="/js/economy-ui.js?v=50"></script>
+</body>
+</html>

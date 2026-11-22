@@ -1,0 +1,140 @@
+[
+  {
+    "actor": "admin",
+    "action": "create",
+    "ruleId": "RULE-MWHYKVV6",
+    "before": null,
+    "after": {
+      "name": "+20 si v+14",
+      "phase": "bidding",
+      "priority": 800,
+      "status": "published",
+      "enabled": true,
+      "explanation": "",
+      "conditions": [
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "suitSource": "partnerOriginalSuit",
+        "calculation": "current_plus",
+        "increment": 20,
+        "fixedValue": 90,
+        "mustBeatCurrent": true,
+        "competitiveExtraStep": false,
+        "thinking": false
+      },
+      "id": "RULE-MWHYKVV6",
+      "fingerprint": "a817935711cba06e886dae4bb9564992cec60fdfad37fb104d5314cf6acb3b5a",
+      "updatedAt": "2026-11-15T14:57:31.218Z"
+    },
+    "at": "2026-11-15T14:57:31.230Z"
+  },
+  {
+    "actor": "admin",
+    "action": "update",
+    "ruleId": "TUN-90-DIRECT-V9",
+    "before": {
+      "id": "TUN-90-DIRECT-V9",
+      "name": "🔔 90 مباشر + V+9 → +20",
+      "phase": "bidding",
+      "priority": 960,
+      "enabled": true,
+      "status": "published",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "partnerOwnsOriginalContract",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "calculation": "partner_original_plus",
+        "increment": 20,
+        "suitSource": "partnerOriginalSuit",
+        "mustBeatCurrent": true,
+        "competitiveExtraStep": true
+      },
+      "explanation": "الشريك فتح 90 مباشرة = V+9+D. أنا عندي V+9 = +20."
+    },
+    "after": {
+      "id": "TUN-90-DIRECT-V9",
+      "name": "🔔 90 مباشر + V+9 → +20",
+      "phase": "bidding",
+      "priority": 960,
+      "status": "published",
+      "enabled": true,
+      "explanation": "الشريك فتح 90 مباشرة = V+9+D. أنا عندي V+9 = +20.",
+      "conditions": [
+        {
+          "field": "partnerOpeningWasDirect",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "partnerOriginalBid",
+          "operator": "eq",
+          "value": 90
+        },
+        {
+          "field": "hasJackInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        },
+        {
+          "field": "hasNineInPartnerSuit",
+          "operator": "eq",
+          "value": true
+        }
+      ],
+      "action": {
+        "type": "bid",
+        "suitSource": "partnerOriginalSuit",
+        "calculation": "partner_original_plus",
+        "increment": 20,
+        "fixedValue": 90,
+        "mustBeatCurrent": true,
+        "competitiveExtraStep": true,
+        "thinking": false
+      },
+      "fingerprint": "4e010823b3096006d5f958327f8781c99cf72c1ca1e07c9b9b6041218b8a0c2e",
+      "updatedAt": "2026-11-15T14:58:45.402Z"
+    },
+    "at": "2026-11-15T14:58:45.403Z"
+  }
+]
